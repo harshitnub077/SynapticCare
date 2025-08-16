@@ -88,3 +88,6 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
     The app will run on `http://localhost:5173`.
 
 
+
+## Platform Overview
+SynapticCare is a digital clinical platform connecting patients with verified medical specialists.
