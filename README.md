@@ -91,3 +91,9 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
 
 ## Platform Overview
 SynapticCare is a digital clinical platform connecting patients with verified medical specialists.
+
+### Core Modules
+- Clinician directory and appointment booking
+- Diagnostic report upload and viewer
+- Vital signs health telemetry
+- Secure clinician messaging
