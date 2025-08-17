@@ -97,3 +97,8 @@ SynapticCare is a digital clinical platform connecting patients with verified me
 - Diagnostic report upload and viewer
 - Vital signs health telemetry
 - Secure clinician messaging
+
+### Technology Stack
+- Frontend: React 18, Tailwind CSS, Lucide Icons
+- Backend: Node.js, Express, Prisma ORM
+- Database: Supabase / PostgreSQL
