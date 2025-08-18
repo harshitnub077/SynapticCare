@@ -102,3 +102,6 @@ SynapticCare is a digital clinical platform connecting patients with verified me
 - Frontend: React 18, Tailwind CSS, Lucide Icons
 - Backend: Node.js, Express, Prisma ORM
 - Database: Supabase / PostgreSQL
+
+### HIPAA & Security
+Patient health information (PHI) is encrypted at rest and in transit with strict Row-Level Security policies.
