@@ -105,3 +105,11 @@ SynapticCare is a digital clinical platform connecting patients with verified me
 
 ### HIPAA & Security
 Patient health information (PHI) is encrypted at rest and in transit with strict Row-Level Security policies.
+
+### Quick Setup
+```bash
+git clone https://github.com/harshitnub077/SynapticCare.git
+cd SynapticCare
+npm install
+cd frontend && npm install && npm run dev
+```
