@@ -115,3 +115,8 @@ cd frontend && npm install && npm run dev
 ```
 
 <!-- Reviewed medical terminology -->
+
+### Project Roadmap
+- [x] Appointment booking workflow
+- [x] Diagnostic report viewer
+- [ ] Digital prescription downloads
