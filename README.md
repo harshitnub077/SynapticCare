@@ -120,3 +120,6 @@ cd frontend && npm install && npm run dev
 - [x] Appointment booking workflow
 - [x] Diagnostic report viewer
 - [ ] Digital prescription downloads
+
+## License
+Proprietary & Confidential.
