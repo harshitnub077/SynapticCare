@@ -123,3 +123,5 @@ cd frontend && npm install && npm run dev
 
 ## License
 Proprietary & Confidential.
+
+<!-- Updated clinical dashboard notes -->
