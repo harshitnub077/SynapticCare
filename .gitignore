@@ -6,3 +6,9 @@ Dockerfile
 postman_collection.json
 API_DOCS.md
 backend/uploads/
+
+# Secrets
+.env
+.env.local
+backend/.env
+frontend/.env.local
