@@ -17,3 +17,7 @@ frontend/.env.local
 uploads/
 *.pdf
 *.dcm
+
+# Prisma and database
+prisma/dev.db*
+*.sqlite
