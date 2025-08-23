@@ -12,3 +12,8 @@ backend/uploads/
 .env.local
 backend/.env
 frontend/.env.local
+
+# Patient uploads
+uploads/
+*.pdf
+*.dcm
