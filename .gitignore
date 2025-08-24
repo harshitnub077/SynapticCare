@@ -21,3 +21,7 @@ uploads/
 # Prisma and database
 prisma/dev.db*
 *.sqlite
+
+# IDEs
+.vscode/
+.idea/
