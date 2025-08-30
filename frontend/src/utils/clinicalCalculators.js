@@ -13,3 +13,8 @@ export const getBmiCategory = (bmi) => {
   if (bmi < 30) return 'Overweight';
   return 'Obese';
 };
+
+export const formatBloodPressure = (systolic, diastolic) => {
+  if (!systolic || !diastolic) return 'N/A';
+  return `${systolic}/${diastolic} mmHg`;
+};
