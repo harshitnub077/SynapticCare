@@ -18,3 +18,8 @@ export const formatBloodPressure = (systolic, diastolic) => {
   if (!systolic || !diastolic) return 'N/A';
   return `${systolic}/${diastolic} mmHg`;
 };
+
+export const formatAppointmentDate = (isoString) => {
+  const date = new Date(isoString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
