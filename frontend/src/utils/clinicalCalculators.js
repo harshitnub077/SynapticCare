@@ -23,3 +23,5 @@ export const formatAppointmentDate = (isoString) => {
   const date = new Date(isoString);
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
+
+// Clean up clinical calculation exports
