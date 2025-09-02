@@ -129,3 +129,5 @@ Proprietary & Confidential.
 <!-- Verified documentation structure -->
 
 <!-- Cleaned code snippet indentations -->
+
+<!-- Polished badge alignment -->
