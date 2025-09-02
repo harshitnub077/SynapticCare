@@ -25,3 +25,5 @@ prisma/dev.db*
 # IDEs
 .vscode/
 .idea/
+
+# Temporary scratch
