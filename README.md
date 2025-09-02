@@ -127,3 +127,5 @@ Proprietary & Confidential.
 <!-- Updated clinical dashboard notes -->
 
 <!-- Verified documentation structure -->
+
+<!-- Cleaned code snippet indentations -->
