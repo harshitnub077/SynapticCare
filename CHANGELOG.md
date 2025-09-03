@@ -9,3 +9,5 @@
 - Diagnostic report viewer integration
 
 <!-- WIP: upcoming patch notes -->
+
+<!-- Patched release tag documentation -->
