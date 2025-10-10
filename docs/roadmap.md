@@ -65,3 +65,4 @@
 <!-- [2025-10-10T11:34:23+05:30] docs: update telemetry alert threshold guidelines in roadmap -->
 <!-- [2025-10-10T12:48:46+05:30] feat: add abnormal vital signs alert notification toast -->
 <!-- [2025-10-10T14:03:09+05:30] style: polish clinical danger alert red banner tokens -->
+<!-- [2025-10-10T15:17:32+05:30] refactor: extract vitals range validation helper -->
