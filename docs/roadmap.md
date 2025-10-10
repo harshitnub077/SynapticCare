@@ -68,3 +68,4 @@
 <!-- [2025-10-10T15:17:32+05:30] refactor: extract vitals range validation helper -->
 <!-- [2025-10-10T16:32:55+05:30] perf: throttle real-time vitals chart point additions -->
 <!-- [2025-10-10T17:46:18+05:30] fix: handle null readings gracefully without crashing graph -->
+<!-- [2025-10-10T19:01:41+05:30] style: standardize medical unit badge typography -->
