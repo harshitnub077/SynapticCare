@@ -67,3 +67,4 @@
 <!-- [2025-10-10T14:03:09+05:30] style: polish clinical danger alert red banner tokens -->
 <!-- [2025-10-10T15:17:32+05:30] refactor: extract vitals range validation helper -->
 <!-- [2025-10-10T16:32:55+05:30] perf: throttle real-time vitals chart point additions -->
+<!-- [2025-10-10T17:46:18+05:30] fix: handle null readings gracefully without crashing graph -->
