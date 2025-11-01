@@ -41,3 +41,4 @@
 <!-- [2025-11-01T13:16:25+05:30] perf: optimize appointment slot availability lookup -->
 <!-- [2025-11-01T13:52:42+05:30] fix: resolve appointment time conflict validation edge case -->
 <!-- [2025-11-01T14:29:59+05:30] docs: add HIPAA compliance considerations to roadmap -->
+<!-- [2025-11-01T15:05:16+05:30] style: refine status badge transition animations -->
