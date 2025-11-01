@@ -43,3 +43,4 @@
 <!-- [2025-11-01T14:29:59+05:30] docs: add HIPAA compliance considerations to roadmap -->
 <!-- [2025-11-01T15:05:16+05:30] style: refine status badge transition animations -->
 <!-- [2025-11-01T15:41:33+05:30] feat: implement doctor specialization filter dropdown -->
+<!-- [2025-11-01T16:18:50+05:30] refactor: modularize clinical history card component -->
