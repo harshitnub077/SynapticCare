@@ -44,3 +44,4 @@
 <!-- [2025-11-01T15:05:16+05:30] style: refine status badge transition animations -->
 <!-- [2025-11-01T15:41:33+05:30] feat: implement doctor specialization filter dropdown -->
 <!-- [2025-11-01T16:18:50+05:30] refactor: modularize clinical history card component -->
+<!-- [2025-11-01T16:54:07+05:30] perf: reduce DOM repaints on telemetry chart updates -->
