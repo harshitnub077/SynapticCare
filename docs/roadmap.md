@@ -39,3 +39,4 @@
 <!-- [2025-11-01T12:03:51+05:30] style: polish dark theme emerald accent tokens -->
 <!-- [2025-11-01T12:40:08+05:30] feat: add vital signs telemetry card (BP, HR, SpO2) -->
 <!-- [2025-11-01T13:16:25+05:30] perf: optimize appointment slot availability lookup -->
+<!-- [2025-11-01T13:52:42+05:30] fix: resolve appointment time conflict validation edge case -->
