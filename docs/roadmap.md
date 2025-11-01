@@ -48,3 +48,4 @@
 <!-- [2025-11-01T17:30:24+05:30] fix: prevent double submission on appointment booking button -->
 <!-- [2025-11-01T18:07:41+05:30] docs: document role-based permissions matrix in roadmap -->
 <!-- [2025-11-01T18:43:58+05:30] style: standardize modal dialog backdrop filter -->
+<!-- [2025-11-01T19:19:15+05:30] feat: add prescription medication reminder checklist -->
