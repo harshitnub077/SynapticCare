@@ -61,3 +61,4 @@
 <!-- [2025-11-10T17:34:59+05:30] docs: document emergency contact escalation procedure -->
 <!-- [2025-11-10T18:36:16+05:30] style: tune input focus ring highlight tokens -->
 <!-- [2025-11-10T19:39:33+05:30] test: add integration test fixtures for triage assessment -->
+<!-- [2025-11-10T20:42:50+05:30] docs: finalize Phase 3 clinical feature delivery checklist -->
