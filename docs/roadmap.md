@@ -56,3 +56,4 @@
 <!-- [2025-11-10T12:20:34+05:30] feat: add drag-and-drop diagnostic file upload indicator -->
 <!-- [2025-11-10T13:23:51+05:30] style: enhance dark mode table contrast for lab results -->
 <!-- [2025-11-10T14:25:08+05:30] perf: lazy load historical consultation records -->
+<!-- [2025-11-10T15:28:25+05:30] fix: handle corrupted PDF report preview fallback -->
