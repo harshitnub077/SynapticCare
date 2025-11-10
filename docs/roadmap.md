@@ -55,3 +55,4 @@
 <!-- [2025-11-10T11:17:17+05:30] docs: update diagnostic report upload workflow in roadmap -->
 <!-- [2025-11-10T12:20:34+05:30] feat: add drag-and-drop diagnostic file upload indicator -->
 <!-- [2025-11-10T13:23:51+05:30] style: enhance dark mode table contrast for lab results -->
+<!-- [2025-11-10T14:25:08+05:30] perf: lazy load historical consultation records -->
