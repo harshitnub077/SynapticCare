@@ -54,3 +54,4 @@
 <!-- [2025-11-01T21:08:06+05:30] docs: update clinical workflow milestone progress in roadmap -->
 <!-- [2025-11-10T11:17:17+05:30] docs: update diagnostic report upload workflow in roadmap -->
 <!-- [2025-11-10T12:20:34+05:30] feat: add drag-and-drop diagnostic file upload indicator -->
+<!-- [2025-11-10T13:23:51+05:30] style: enhance dark mode table contrast for lab results -->
