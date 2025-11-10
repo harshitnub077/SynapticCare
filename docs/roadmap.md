@@ -53,3 +53,4 @@
 <!-- [2025-11-01T20:32:49+05:30] refactor: clean up unused medical icon assets -->
 <!-- [2025-11-01T21:08:06+05:30] docs: update clinical workflow milestone progress in roadmap -->
 <!-- [2025-11-10T11:17:17+05:30] docs: update diagnostic report upload workflow in roadmap -->
+<!-- [2025-11-10T12:20:34+05:30] feat: add drag-and-drop diagnostic file upload indicator -->
