@@ -58,3 +58,4 @@
 <!-- [2025-11-10T14:25:08+05:30] perf: lazy load historical consultation records -->
 <!-- [2025-11-10T15:28:25+05:30] fix: handle corrupted PDF report preview fallback -->
 <!-- [2025-11-10T16:31:42+05:30] refactor: consolidate patient notification center state -->
+<!-- [2025-11-10T17:34:59+05:30] docs: document emergency contact escalation procedure -->
