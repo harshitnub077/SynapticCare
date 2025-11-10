@@ -60,3 +60,4 @@
 <!-- [2025-11-10T16:31:42+05:30] refactor: consolidate patient notification center state -->
 <!-- [2025-11-10T17:34:59+05:30] docs: document emergency contact escalation procedure -->
 <!-- [2025-11-10T18:36:16+05:30] style: tune input focus ring highlight tokens -->
+<!-- [2025-11-10T19:39:33+05:30] test: add integration test fixtures for triage assessment -->
