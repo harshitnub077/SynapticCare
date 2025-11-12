@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import "./LoginSignupForm.css"; 
-import api from "../api/axiosConfig.js";
+import "./LoginSignupForm.css";
+import api from "../api/axiosConfig";
+
 
 const LoginSignupForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,8 +12,7 @@ const LoginSignupForm = () => {
   });
   const [message, setMessage] = useState("");
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +34,7 @@ const LoginSignupForm = () => {
         setMessage(res.data.message || "Signup successful!");
       }
     } catch (err) {
-      if (err.response) setMessage(`${err.response.data.message}`);
+      if (err.response) setMessage(err.response.data.message);
       else setMessage("Server not responding");
     }
   };
@@ -45,16 +45,10 @@ const LoginSignupForm = () => {
         <h2 className="form-title">{isLogin ? "Login Form" : "Signup Form"}</h2>
 
         <div className="tab-buttons">
-          <button
-            className={`tab ${isLogin ? "active" : ""}`}
-            onClick={() => setIsLogin(true)}
-          >
+          <button className={`tab ${isLogin ? "active" : ""}`} onClick={() => setIsLogin(true)}>
             Login
           </button>
-          <button
-            className={`tab ${!isLogin ? "active" : ""}`}
-            onClick={() => setIsLogin(false)}
-          >
+          <button className={`tab ${!isLogin ? "active" : ""}`} onClick={() => setIsLogin(false)}>
             Signup
           </button>
         </div>
@@ -99,24 +93,6 @@ const LoginSignupForm = () => {
         </form>
 
         {message && <p className="message-text">{message}</p>}
-
-        <p className="bottom-text">
-          {isLogin ? (
-            <>
-              Create an account{" "}
-              <span className="toggle-link" onClick={() => setIsLogin(false)}>
-                Signup now
-              </span>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <span className="toggle-link" onClick={() => setIsLogin(true)}>
-                Login now
-              </span>
-            </>
-          )}
-        </p>
       </div>
     </div>
   );

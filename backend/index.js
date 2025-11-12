@@ -7,19 +7,8 @@ const jwt = require("jsonwebtoken");
 const { z } = require("zod");
 const { prisma } = require("./prisma");
 
-const REQUIRED_ENV_VARS = ["DATABASE_URL", "JWT_SECRET", "CLIENT_ORIGIN"];
-const missingVars = REQUIRED_ENV_VARS.filter((name) => !process.env[name]);
-if (missingVars.length > 0) {
-  throw new Error(
-    `Missing required environment variable${missingVars.length > 1 ? "s" : ""}: ${missingVars.join(
-      ", "
-    )}`
-  );
-}
-
 const app = express();
 app.use(express.json());
-
 
 const allowedOrigins = process.env.CLIENT_ORIGIN.split(",").map((o) => o.trim());
 app.use(
@@ -29,21 +18,22 @@ app.use(
   })
 );
 
-
-
 app.use((req, res, next) => {
   console.log("🛰 Origin:", req.headers.origin);
   next();
 });
 
+const REQUIRED_ENV_VARS = ["DATABASE_URL", "JWT_SECRET", "CLIENT_ORIGIN"];
+const missingVars = REQUIRED_ENV_VARS.filter((name) => !process.env[name]);
+if (missingVars.length > 0) {
+  throw new Error(`Missing required environment variable(s): ${missingVars.join(", ")}`);
+}
 
 const privateKey = process.env.JWT_SECRET;
-
 
 app.get("/", (req, res) => {
   res.send("Backend server is alive 🚀");
 });
-
 
 app.post("/signup", async (req, res) => {
   const schema = z.object({
@@ -59,20 +49,14 @@ app.post("/signup", async (req, res) => {
   });
 
   const parsed = schema.safeParse(req.body);
-  if (!parsed.success) {
-    return res.status(400).json({
-      message: "Invalid input",
-      error: parsed.error.errors,
-    });
-  }
+  if (!parsed.success)
+    return res.status(400).json({ message: "Invalid input", error: parsed.error.errors });
 
   const { email, password, name } = parsed.data;
 
   try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
-    }
+    if (existingUser) return res.status(409).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     await prisma.user.create({
@@ -86,7 +70,6 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-
 app.post("/signin", async (req, res) => {
   const { email, password } = req.body;
 
@@ -99,7 +82,6 @@ app.post("/signin", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ id: user.id }, privateKey, { expiresIn: "1h" });
-
     res.json({ message: "Login successful", token });
   } catch (error) {
     console.error("Signin Error:", error);
@@ -107,15 +89,5 @@ app.post("/signin", async (req, res) => {
   }
 });
 
-
-app.use((err, req, res, next) => {
-  if (err.message.includes("CORS")) {
-    return res.status(403).json({ message: "CORS Forbidden: " + err.message });
-  }
-  console.error("Unhandled Error:", err);
-  res.status(500).json({ message: "Internal Server Error" });
-});
-
-
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
