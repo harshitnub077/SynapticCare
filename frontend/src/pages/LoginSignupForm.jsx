@@ -3,7 +3,7 @@ import "./LoginSignupForm.css";
 import api from "../api/axiosConfig";
 
 
-const LoginSignupForm = () => {
+const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
@@ -25,6 +25,7 @@ const LoginSignupForm = () => {
         });
         localStorage.setItem("token", res.data.token);
         setMessage("Login successful!");
+        onLoginSuccess();
       } else {
         const res = await api.post("/signup", {
           name: formData.name,
