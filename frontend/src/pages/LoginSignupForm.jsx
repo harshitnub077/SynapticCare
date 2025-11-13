@@ -19,7 +19,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
 
     try {
       if (isLogin) {
-        const res = await api.post("/signin", {
+        const res = await api.post("/login", {
           email: formData.email,
           password: formData.password,
         });
