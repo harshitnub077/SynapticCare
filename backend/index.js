@@ -10,7 +10,16 @@ const { prisma } = require("./prisma");
 const app = express();
 app.use(express.json());
 
+
+console.log("Loaded ENV:");
+console.log("CLIENT_ORIGIN:", process.env.CLIENT_ORIGIN);
+console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
+console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
+
+
 const allowedOrigins = process.env.CLIENT_ORIGIN.split(",").map((o) => o.trim());
+console.log("Allowed Origins:", allowedOrigins);
+
 app.use(
   cors({
     origin: allowedOrigins,
@@ -18,10 +27,12 @@ app.use(
   })
 );
 
+
 app.use((req, res, next) => {
   console.log("🛰 Origin:", req.headers.origin);
   next();
 });
+
 
 const REQUIRED_ENV_VARS = ["DATABASE_URL", "JWT_SECRET", "CLIENT_ORIGIN"];
 const missingVars = REQUIRED_ENV_VARS.filter((name) => !process.env[name]);
@@ -31,20 +42,20 @@ if (missingVars.length > 0) {
 
 const privateKey = process.env.JWT_SECRET;
 
+
+
 app.get("/", (req, res) => {
   res.send("Backend server is alive 🚀");
 });
 
+// SIGNUP
 app.post("/signup", async (req, res) => {
   const schema = z.object({
     email: z.string().email(),
     password: z
       .string()
       .min(8)
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/,
-        "Password must include upper, lower, and special character"
-      ),
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/),
     name: z.string().min(3).max(30),
   });
 
@@ -70,7 +81,8 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.post("/signin", async (req, res) => {
+// login
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -89,5 +101,7 @@ app.post("/signin", async (req, res) => {
   }
 });
 
+
+// ---------------- Start Server -----------------
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
