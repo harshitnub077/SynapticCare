@@ -3,7 +3,7 @@ import "./LoginSignupForm.css";
 import api from "../api/axiosConfig";
 
 
-const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
+const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
@@ -19,7 +19,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
 
     try {
       if (isLogin) {
-        const res = await api.post("/login", {
+        const res = await api.post("/auth/login", {
           email: formData.email,
           password: formData.password,
         });
@@ -27,7 +27,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
         setMessage("Login successful!");
         onLoginSuccess();
       } else {
-        const res = await api.post("/signup", {
+        const res = await api.post("/auth/signup", {
           name: formData.name,
           email: formData.email,
           password: formData.password,
