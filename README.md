@@ -1,15 +1,45 @@
-# SynapticCare+
+# SynapticCare+ — AI-Powered Healthcare Assistant
 
-A fullstack AI-powered medical health assistant app designed to help users manage their health records and get AI-driven insights.
+SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, and **Machine Learning** to help users analyze symptoms, upload medical reports, chat with an AI health assistant, and track their overall health trends.
 
-## Features
-- **User Authentication**: Secure signup and login using JWT and bcrypt.
-- **Medical Reports**: Upload and store medical reports (PDF/Images).
-- **AI Assistant**: Chat with an AI assistant to analyze reports and get health advice.
-- **Health Dashboard**: Visualize health trends and extracted data.
-- **Responsive Design**: Modern UI with a clean blue/white theme.
+## 🚀 Features
 
-## Tech Stack
+### 🧠 AI Health Assistant
+- Ask health questions in natural language  
+- AI-generated summaries & recommendations  
+- Symptom analysis  
+
+### 🩺 Medical Report Analyzer
+- Upload PDFs/images  
+- Automatic text extraction  
+- AI-powered structured health summary  
+- Detect abnormalities (e.g., low hemoglobin, high WBC)
+
+### 🔐 Authentication (JWT)
+- User login/signup  
+- Password hashing with bcrypt  
+- JWT-based protected routes  
+
+### 📊 Health Dashboard
+- View past reports  
+- Track health insights  
+- Graphs using Recharts  
+
+### ⚡ Modern UI
+- React + Tailwind  
+- Responsive UI  
+- Clean blue/white theme
+
+---
+
+## 🏗️ Tech Stack
+
+### Frontend
+- **Framework**: React (Vite)
+- **Styling**: Tailwind CSS
+- **State Management**: React Hooks
+- **HTTP Client**: Axios
+- **Charts**: Recharts
 
 ### Backend
 - **Runtime**: Node.js
@@ -18,13 +48,16 @@ A fullstack AI-powered medical health assistant app designed to help users manag
 - **ORM**: Prisma
 - **Auth**: JSON Web Tokens (JWT)
 - **AI**: OpenAI API
+- **File Upload**: Multer
 
-### Frontend
-- **Framework**: React (Vite)
-- **Styling**: Tailwind CSS
-- **State Management**: React Hooks
-- **HTTP Client**: Axios
-- **Charts**: Recharts
+---
+
+## 🌐 Live Deployments
+
+- **Frontend**: https://synaptic-care.vercel.app/
+- **Backend**: https://synapticcare.onrender.com
+
+---
 
 ## Setup & Installation
 
@@ -78,9 +111,9 @@ docker-compose up --build
 ```
 
 ## API Endpoints
-- `POST /api/v1/auth/signup`: Create a new account.
-- `POST /api/v1/auth/login`: Login to an existing account.
-- `GET /api/v1/users/me`: Get current user profile.
+- `POST /api/v1/auth/signup`: Create a new account
+- `POST /api/v1/auth/login`: Login to an existing account
+- `GET /api/v1/users/me`: Get current user profile
 
 ## License
 ISC
