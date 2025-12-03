@@ -28,8 +28,8 @@ const signup = async (req, res) => {
             data: { email, password: hashedPassword, name },
         });
 
-        // Generate token for immediate login
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "1h" });
+        // Generate token for immediate login (24 hours expiration)
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "24h" });
 
         res.status(201).json({ message: "Signup successful", token, user: { id: user.id, name: user.name, email: user.email } });
     } catch (error) {
@@ -49,7 +49,7 @@ const login = async (req, res) => {
         if (!passwordMatch)
             return res.status(401).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "1h" });
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "24h" });
 
         res.json({ message: "Login successful", token, user: { id: user.id, name: user.name, email: user.email } });
     } catch (error) {

@@ -13,15 +13,29 @@ const Reports = () => {
         fetchReports();
     }, []);
 
+    useEffect(() => {
+        // Auto-refresh every 3 seconds if any report is processing
+        const interval = setInterval(() => {
+            const hasProcessing = reports.some(r => r.status === "processing");
+            if (hasProcessing) {
+                fetchReports();
+            }
+        }, 3000);
+        
+        return () => clearInterval(interval);
+    }, [reports]);
+
     const fetchReports = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await api.get("/reports", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await api.get("/reports");
             setReports(response.data.reports);
+            setError("");
         } catch (err) {
-            setError("Failed to load reports");
+            if (err.response?.status === 401) {
+                setError("Session expired. Please log in again.");
+            } else {
+                setError("Failed to load reports");
+            }
             console.error(err);
         } finally {
             setLoading(false);

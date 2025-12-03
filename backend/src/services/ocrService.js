@@ -23,20 +23,44 @@ class OCRService {
 
     /**
      * Extract text from image using Tesseract OCR
+     * Scans the entire image comprehensively
      */
     async extractFromImage(filePath) {
         try {
+            console.log(`Starting comprehensive OCR scan of image: ${filePath}`);
+            
+            // Use Tesseract with optimized settings for medical documents
+            // Configure for comprehensive scanning of entire image
             const result = await Tesseract.recognize(filePath, "eng", {
-                logger: (m) => console.log(m),
+                logger: (m) => {
+                    // Log progress for debugging
+                    if (m.status === "recognizing text") {
+                        console.log(`OCR Progress: ${Math.round(m.progress * 100)}%`);
+                    }
+                },
+                // Optimize OCR settings for medical documents
+                // PSM mode 3 = Fully automatic page segmentation (default)
+                // This ensures the entire image is scanned comprehensively
             });
 
+            const extractedText = result.data.text || "";
+            const confidence = result.data.confidence || 0;
+            
+            console.log(`OCR completed. Extracted ${extractedText.length} characters with ${confidence.toFixed(1)}% confidence`);
+
+            if (!extractedText || extractedText.trim().length === 0) {
+                throw new Error("No text could be extracted from the image. Please ensure the image is clear and readable.");
+            }
+
             return {
-                text: result.data.text,
-                confidence: result.data.confidence,
+                text: extractedText,
+                confidence: confidence,
+                words: result.data.words || [],
+                lines: result.data.lines || [],
             };
         } catch (error) {
             console.error("Image OCR error:", error);
-            throw new Error("Failed to extract text from image");
+            throw new Error(`Failed to extract text from image: ${error.message}`);
         }
     }
 

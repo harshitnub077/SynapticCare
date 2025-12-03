@@ -24,11 +24,9 @@ const UploadReport = () => {
         formData.append("file", file);
 
         try {
-            const token = localStorage.getItem("token");
             const response = await api.post("/reports", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
                 },
                 onUploadProgress: (progressEvent) => {
                     const percentCompleted = Math.round(
@@ -44,7 +42,20 @@ const UploadReport = () => {
             }, 2000);
         } catch (error) {
             console.error("Upload error:", error);
-            setMessage(error.response?.data?.message || "Failed to upload report");
+            let errorMessage = "Failed to upload report";
+            
+            if (error.response) {
+                // Server responded with error
+                errorMessage = error.response.data?.message || error.response.data?.error || errorMessage;
+            } else if (error.request) {
+                // Request made but no response
+                errorMessage = "Unable to reach server. Please check your connection and try again.";
+            } else {
+                // Error setting up request
+                errorMessage = error.message || errorMessage;
+            }
+            
+            setMessage(errorMessage);
         } finally {
             setUploading(false);
         }

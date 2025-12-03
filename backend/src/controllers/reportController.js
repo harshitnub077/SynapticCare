@@ -43,17 +43,34 @@ const uploadReport = async (req, res) => {
 
 const processReport = async (reportId, filePath, fileType) => {
     try {
-        // Extract text
+        console.log(`[${reportId}] Starting OCR extraction for ${fileType}...`);
+        
+        // Extract text using OCR
         const extracted = await ocrService.extractText(filePath, fileType);
-        const extractedText = extracted.text;
+        const extractedText = extracted.text || "";
 
-        // Parse and analyze
+        if (!extractedText || extractedText.trim().length === 0) {
+            throw new Error("No text could be extracted from the image. Please ensure the image is clear and readable.");
+        }
+
+        console.log(`[${reportId}] ✅ OCR Complete: Extracted ${extractedText.length} characters from entire image`);
+        console.log(`[${reportId}] Sample of extracted text (first 200 chars): ${extractedText.substring(0, 200)}...`);
+
+        // Parse and analyze the extracted text
         const analysis = parserService.analyze(extractedText);
+        
+        console.log(`[${reportId}] Parsed ${analysis.parsedData.length} test results, found ${analysis.flags.length} abnormalities.`);
 
-        // Get AI insights
-        const aiInsights = await aiService.analyzeReport(analysis.parsedData, analysis.flags);
+        // Get AI insights using Gemini
+        // Pass both parsed data and raw text for comprehensive analysis
+        console.log(`[${reportId}] Requesting AI analysis...`);
+        const aiInsights = await aiService.analyzeReport(
+            analysis.parsedData, 
+            analysis.flags,
+            extractedText // Pass raw text as fallback context
+        );
 
-        // Update report
+        // Update report with all extracted data
         await prisma.report.update({
             where: { id: reportId },
             data: {
@@ -67,12 +84,15 @@ const processReport = async (reportId, filePath, fileType) => {
             },
         });
 
-        console.log(`Report ${reportId} processed successfully`);
+        console.log(`[${reportId}] ✅ Report processed successfully with AI summary`);
     } catch (error) {
-        console.error(`Failed to process report ${reportId}:`, error);
+        console.error(`[${reportId}] ❌ Failed to process report:`, error.message);
         await prisma.report.update({
             where: { id: reportId },
-            data: { status: "error" },
+            data: { 
+                status: "error",
+                extractedText: error.message || "Processing failed",
+            },
         });
     }
 };

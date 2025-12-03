@@ -16,13 +16,14 @@ const ReportDetail = () => {
 
     const fetchReport = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await api.get(`/reports/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await api.get(`/reports/${id}`);
             setReport(response.data.report);
         } catch (err) {
-            setError("Failed to load report");
+            if (err.response?.status === 401) {
+                setError("Session expired. Please log in again.");
+            } else {
+                setError("Failed to load report");
+            }
             console.error(err);
         } finally {
             setLoading(false);
@@ -88,41 +89,48 @@ const ReportDetail = () => {
                     </div>
                 </div>
 
-                {/* AI Insights */}
+                {/* Report Summary */}
                 {aiInsights && (
-                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <h2 className="text-xl font-bold text-slate-900 mb-4">AI Analysis</h2>
+                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-slate-200">
+                        <div className="mb-4">
+                            <h2 className="text-xl font-semibold text-slate-900">Report Summary</h2>
+                        </div>
+                        
                         <div className="space-y-4">
-                            <div>
-                                <h3 className="font-medium text-slate-900 mb-2">Summary</h3>
-                                <p className="text-slate-700">{aiInsights.summary}</p>
+                            {/* Summary */}
+                            <div className="text-slate-700 leading-relaxed whitespace-pre-line">
+                                {aiInsights.summary}
                             </div>
+
+                            {/* Concerns */}
                             {aiInsights.concerns && aiInsights.concerns.length > 0 && (
                                 <div>
-                                    <h3 className="font-medium text-slate-900 mb-2">Concerns</h3>
-                                    <ul className="list-disc list-inside space-y-1">
+                                    <h3 className="font-medium text-slate-900 mb-2">Main Concerns</h3>
+                                    <ul className="space-y-1 list-disc list-inside text-slate-700">
                                         {aiInsights.concerns.map((concern, idx) => (
-                                            <li key={idx} className="text-slate-700">
-                                                {concern}
-                                            </li>
+                                            <li key={idx}>{concern}</li>
                                         ))}
                                     </ul>
                                 </div>
                             )}
+
+                            {/* Recommendations */}
                             {aiInsights.recommendations && aiInsights.recommendations.length > 0 && (
                                 <div>
-                                    <h3 className="font-medium text-slate-900 mb-2">Recommendations</h3>
-                                    <ul className="list-disc list-inside space-y-1">
+                                    <h3 className="font-medium text-slate-900 mb-2">What to Do Next</h3>
+                                    <ul className="space-y-1 list-disc list-inside text-slate-700">
                                         {aiInsights.recommendations.map((rec, idx) => (
-                                            <li key={idx} className="text-slate-700">
-                                                {rec}
-                                            </li>
+                                            <li key={idx}>{rec}</li>
                                         ))}
                                     </ul>
                                 </div>
                             )}
-                            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800">
-                                {aiInsights.disclaimer}
+
+                            {/* Disclaimer */}
+                            <div className="pt-3 border-t border-slate-200">
+                                <p className="text-xs text-slate-500">
+                                    {aiInsights.disclaimer || "This is not medical advice. Please consult a healthcare professional."}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -185,17 +193,6 @@ const ReportDetail = () => {
                     </div>
                 )}
 
-                {/* Raw Text */}
-                {report.extractedText && (
-                    <div className="bg-white rounded-lg shadow-sm p-6">
-                        <h2 className="text-xl font-bold text-slate-900 mb-4">Extracted Text</h2>
-                        <div className="bg-slate-50 rounded-md p-4 max-h-96 overflow-y-auto">
-                            <pre className="text-sm text-slate-700 whitespace-pre-wrap font-mono">
-                                {report.extractedText}
-                            </pre>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );

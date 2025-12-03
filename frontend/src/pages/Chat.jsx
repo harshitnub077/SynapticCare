@@ -27,10 +27,7 @@ const Chat = () => {
 
     const fetchHistory = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await api.get("/assistant/history", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await api.get("/assistant/history");
             const history = response.data.messages || [];
             setSavedHistory(history);
             if (history.length === 0) {
@@ -40,6 +37,9 @@ const Chat = () => {
             }
         } catch (error) {
             console.error("Failed to load chat history:", error);
+            if (error.response?.status === 401) {
+                // Token expired, will be handled by interceptor
+            }
         } finally {
             setLoadingHistory(false);
         }
@@ -62,11 +62,9 @@ const Chat = () => {
         setMessages((prev) => [...prev, tempUserMsg]);
 
         try {
-            const token = localStorage.getItem("token");
             const response = await api.post(
                 "/assistant/chat",
-                { message: userMessage },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { message: userMessage }
             );
 
             // Add AI response
@@ -102,16 +100,8 @@ const Chat = () => {
         <div className="min-h-screen bg-slate-50 flex flex-col">
             {/* Header */}
             <div className="bg-white border-b border-slate-200 px-4 py-4">
-                <div className="max-w-4xl mx-auto flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                        <Bot className="h-8 w-8 text-blue-600" />
-                        <div>
-                            <h1 className="text-xl font-bold text-slate-900">AI Health Assistant</h1>
-                            <p className="text-sm text-slate-600">
-                                Ask focused questions about your medical reports.
-                            </p>
-                        </div>
-                    </div>
+                <div className="max-w-4xl mx-auto">
+                    <h1 className="text-lg font-semibold text-slate-900">Chat</h1>
                 </div>
             </div>
 

@@ -37,10 +37,7 @@ const Dashboard = () => {
 
     const fetchDashboardData = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const reportsResponse = await api.get("/reports?limit=5", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const reportsResponse = await api.get("/reports?limit=5");
 
             const reports = reportsResponse.data.reports;
             const abnormal = reports.filter(r => r.flags?.abnormalities?.length > 0);
@@ -65,7 +62,7 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="min-h-screen gradient-medical py-8">
+        <div className="min-h-screen bg-slate-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-8">
@@ -75,39 +72,24 @@ const Dashboard = () => {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="medical-card">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-600 mb-1">Total Reports</p>
-                                <p className="text-3xl font-bold text-slate-900">{stats.totalReports}</p>
-                            </div>
-                            <div className="medical-icon">
-                                <FileText className="h-6 w-6" />
-                            </div>
+                    <div className="bg-white border border-slate-200 rounded-lg p-6">
+                        <div>
+                            <p className="text-sm text-slate-600 mb-1">Total Reports</p>
+                            <p className="text-2xl font-semibold text-slate-900">{stats.totalReports}</p>
                         </div>
                     </div>
 
-                    <div className="medical-card">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-600 mb-1">Flagged Reports</p>
-                                <p className="text-3xl font-bold text-amber-600">{stats.abnormalReports}</p>
-                            </div>
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white shadow-lg">
-                                <AlertCircle className="h-6 w-6" />
-                            </div>
+                    <div className="bg-white border border-slate-200 rounded-lg p-6">
+                        <div>
+                            <p className="text-sm text-slate-600 mb-1">Flagged Reports</p>
+                            <p className="text-2xl font-semibold text-amber-600">{stats.abnormalReports}</p>
                         </div>
                     </div>
 
-                    <div className="medical-card">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-600 mb-1">Health Score</p>
-                                <p className="text-3xl font-bold text-green-600">Good</p>
-                            </div>
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white shadow-lg">
-                                <Activity className="h-6 w-6" />
-                            </div>
+                    <div className="bg-white border border-slate-200 rounded-lg p-6">
+                        <div>
+                            <p className="text-sm text-slate-600 mb-1">Health Status</p>
+                            <p className="text-2xl font-semibold text-green-600">Good</p>
                         </div>
                     </div>
                 </div>

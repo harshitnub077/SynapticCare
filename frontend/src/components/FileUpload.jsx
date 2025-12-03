@@ -34,16 +34,31 @@ const FileUpload = ({ onFileSelect }) => {
     };
 
     const handleFile = (file) => {
-        // Validate file type
-        const validTypes = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
-        if (!validTypes.includes(file.type)) {
-            alert("Please upload a PDF or image file (JPEG, PNG)");
+        // Validate file type - accept common image formats
+        const validTypes = [
+            "application/pdf",
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+            "image/bmp"
+        ];
+        
+        // Also check file extension as fallback (some browsers may not set MIME type correctly)
+        const fileName = file.name.toLowerCase();
+        const validExtensions = [".pdf", ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp"];
+        const hasValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
+        
+        if (!validTypes.includes(file.type) && !hasValidExtension) {
+            alert("Please upload a PDF or image file (JPEG, PNG, GIF, WebP, BMP). Your file type: " + (file.type || "unknown"));
             return;
         }
 
         // Validate file size (10MB)
-        if (file.size > 10 * 1024 * 1024) {
-            alert("File size must be less than 10MB");
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+            alert(`File size (${(file.size / 1024 / 1024).toFixed(2)} MB) exceeds the 10MB limit. Please choose a smaller file.`);
             return;
         }
 
@@ -51,10 +66,14 @@ const FileUpload = ({ onFileSelect }) => {
         onFileSelect(file);
 
         // Create preview for images
-        if (file.type.startsWith("image/")) {
+        if (file.type.startsWith("image/") || hasValidExtension) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPreview(reader.result);
+            };
+            reader.onerror = () => {
+                console.error("Error reading file for preview");
+                setPreview(null);
             };
             reader.readAsDataURL(file);
         } else {
@@ -85,24 +104,32 @@ const FileUpload = ({ onFileSelect }) => {
                         type="file"
                         id="file-upload"
                         className="hidden"
-                        accept=".pdf,image/*"
+                        accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.bmp,image/*"
                         onChange={handleChange}
+                        capture="environment"
                     />
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                        <Upload className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                        <p className="text-lg font-medium text-slate-700 mb-2">
-                            Upload a medical document
-                        </p>
-                        <p className="text-sm text-slate-500 mb-4">
-                            Drag & drop a file here, or use the button below to choose from your computer.
-                            Accepted formats: PDF, JPEG, PNG (max 10MB).
-                        </p>
-                        <button
-                            type="button"
-                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                        >
-                            Choose File
-                        </button>
+                    <label htmlFor="file-upload" className="cursor-pointer block">
+                        <div className="flex flex-col items-center">
+                            <Upload className="mx-auto h-12 w-12 text-slate-400 mb-4" />
+                            <p className="text-lg font-medium text-slate-700 mb-2">
+                                Upload a Medical Report Photo or PDF
+                            </p>
+                            <p className="text-sm text-slate-500 mb-4 text-center max-w-md">
+                                Take a photo of your report or upload from your computer.
+                                <br />
+                                <span className="font-medium">Accepted formats:</span> PDF, JPEG, PNG, GIF, WebP, BMP (max 10MB)
+                            </p>
+                            <button
+                                type="button"
+                                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    document.getElementById("file-upload").click();
+                                }}
+                            >
+                                Choose Photo or PDF
+                            </button>
+                        </div>
                     </label>
                 </div>
             ) : (

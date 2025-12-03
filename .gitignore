@@ -1,3 +1,12 @@
 backend/prisma/dev.db
 backend/prisma/dev.db-journal
 backend/prisma/dev.db
+docker-compose.yml
+Dockerfile
+package-lock.json
+package.json
+
+package-lock.json
+package.json
+postman_collection.json
+API_DOCS.md

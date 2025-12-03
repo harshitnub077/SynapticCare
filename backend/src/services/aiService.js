@@ -50,62 +50,143 @@ class AIService {
     /**
      * Analyze report using Gemini
      */
-    async analyzeReport(parsedData, flags) {
+    async analyzeReport(parsedData, flags, rawText = null) {
         if (!model) {
             return {
                 summary: "AI analysis is currently unavailable. Gemini API key not configured.",
                 concerns: [],
                 recommendations: ["Please configure GEMINI_API_KEY in .env to enable AI analysis."],
                 urgency: "medium",
-                disclaimer: "This is not medical advice.",
+                disclaimer: "This is not medical advice. Please consult a healthcare professional.",
             };
         }
 
         try {
-            const userPrompt = `
-${SYSTEM_PROMPT}
+            // Build comprehensive prompt for patient summary
+            const hasAbnormalities = flags && flags.length > 0;
+            const hasData = parsedData && parsedData.length > 0;
+            
+            let dataContext = "";
+            if (hasData) {
+                dataContext = `\n\nLABORATORY RESULTS FOUND:\n${JSON.stringify(parsedData, null, 2)}`;
+            }
+            
+            // Always include the FULL extracted text for comprehensive analysis
+            if (rawText && rawText.trim().length > 0) {
+                // Use the complete extracted text - Gemini can handle large contexts
+                const fullText = rawText.trim();
+                dataContext += `\n\nCOMPLETE EXTRACTED REPORT TEXT (scanned from entire image):\n${fullText}\n\n`;
+                dataContext += "Analyze ALL the text above comprehensively. Look for:\n";
+                dataContext += "- Patient name, age, gender, date of report\n";
+                dataContext += "- All test names and values (even if not in structured format)\n";
+                dataContext += "- Doctor's notes, observations, or comments\n";
+                dataContext += "- Diagnosis, findings, or recommendations mentioned\n";
+                dataContext += "- Any abnormal values or flagged items\n";
+                dataContext += "- Reference ranges or normal values mentioned\n";
+            } else {
+                dataContext += "\n\nNote: No text was extracted from the image. Please ensure the image is clear and readable.";
+            }
 
-Report Data:
-${JSON.stringify(parsedData, null, 2)}
+            let abnormalityContext = "";
+            if (hasAbnormalities) {
+                abnormalityContext = `\n\nABNORMAL VALUES DETECTED:\n${JSON.stringify(flags, null, 2)}\n\nPay special attention to these abnormal values and explain their clinical significance.`;
+            } else if (hasData) {
+                abnormalityContext = "\n\nAll detected lab values appear to be within normal ranges. Mention this in the summary.";
+            }
 
-Detected Abnormalities:
-${JSON.stringify(flags, null, 2)}
+            const userPrompt = `You are an expert medical AI assistant analyzing a complete medical report that was scanned from an image using OCR (Optical Character Recognition) technology.
 
-Task:
-- Summarize the report in plain language.
-- Explain the abnormal results and their potential implications.
-- Provide 3 recommended next steps.
-- Rate urgency (low/medium/high).
+CRITICAL INSTRUCTIONS:
+- The text below was extracted by scanning the ENTIRE medical report image pixel by pixel
+- You MUST analyze EVERY piece of information in the extracted text
+- Do NOT skip any sections, values, notes, or findings
+- Extract patient information, test results, doctor's notes, and all clinical data
+- Provide a comprehensive analysis covering ALL aspects of the report
 
-Output format (JSON only, no additional text):
+${dataContext}${abnormalityContext}
+
+TASK: Generate a comprehensive patient summary by analyzing ALL the information in the scanned report. Your analysis must be thorough and cover:
+
+1. **Summary** (1-2 short paragraphs, simple language): 
+   - Write in VERY SIMPLE, EASY-TO-UNDERSTAND language that anyone can read
+   - Keep it SHORT and CONCISE - maximum 4-5 sentences total
+   - Use everyday words, avoid medical jargon
+   - Briefly explain what the report shows in plain terms
+   - Mention the main findings only
+   - If something is wrong, say it simply (e.g., "Your blood sugar is high" not "Hyperglycemia detected")
+
+2. **Concerns** (array of 2-4 items, simple language):
+   - List only the main problems found
+   - Write each concern in SIMPLE language (e.g., "Your hemoglobin is low" not "Hemoglobin levels below reference range")
+   - Keep each concern to 1 sentence maximum
+   - Use everyday words that patients understand
+   - If no problems found, say "All test results look normal"
+
+3. **Recommendations** (array of 2-3 items, simple language):
+   - Give simple, clear advice (e.g., "See your doctor soon" not "Consult a healthcare professional")
+   - Keep each recommendation to 1 sentence
+   - Use plain language
+   - Focus on what the patient should do next
+
+4. **Urgency** (one of: "low", "medium", "high"):
+   - "low": Routine follow-up, no immediate action needed
+   - "medium": Should consult doctor soon, but not emergency
+   - "high": Requires prompt medical attention or immediate care
+
+5. **Disclaimer**: Always include: "This is not medical advice. Please consult a healthcare professional."
+
+OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
 {
-  "summary": "...",
-  "concerns": ["...", "...", "..."],
-  "recommendations": ["...", "...", "..."],
+  "summary": "Detailed 2-3 paragraph summary here...",
+  "concerns": ["Concern 1", "Concern 2", "Concern 3"],
+  "recommendations": ["Recommendation 1", "Recommendation 2", "Recommendation 3"],
   "urgency": "low|medium|high",
   "disclaimer": "This is not medical advice. Please consult a healthcare professional."
-}
-`;
+}`;
 
             const result = await model.generateContent(userPrompt);
             const response = await result.response;
             const text = response.text();
 
-            // Extract JSON from response (Gemini might wrap it in markdown)
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                return JSON.parse(jsonMatch[0]);
+            // Clean the response - remove markdown code blocks if present
+            let cleanedText = text.trim();
+            if (cleanedText.startsWith("```json")) {
+                cleanedText = cleanedText.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+            } else if (cleanedText.startsWith("```")) {
+                cleanedText = cleanedText.replace(/```\n?/g, "");
             }
 
-            return JSON.parse(text);
+            // Extract JSON from response
+            const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                const parsed = JSON.parse(jsonMatch[0]);
+                
+                // Ensure all required fields exist
+                return {
+                    summary: parsed.summary || "Report analysis completed. Please review the detailed findings below.",
+                    concerns: Array.isArray(parsed.concerns) ? parsed.concerns : [],
+                    recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : [],
+                    urgency: parsed.urgency || "medium",
+                    disclaimer: parsed.disclaimer || "This is not medical advice. Please consult a healthcare professional.",
+                };
+            }
+
+            // Fallback if JSON parsing fails
+            return {
+                summary: cleanedText.substring(0, 500) || "Unable to parse AI response.",
+                concerns: [],
+                recommendations: ["Please consult a healthcare professional for detailed interpretation."],
+                urgency: "medium",
+                disclaimer: "This is not medical advice. Please consult a healthcare professional.",
+            };
         } catch (error) {
             console.error("Gemini API error:", error);
             return {
-                summary: "Unable to generate AI analysis at this time.",
+                summary: "Unable to generate AI analysis at this time. Please try again or consult a healthcare professional.",
                 concerns: [],
                 recommendations: ["Please consult a healthcare professional for interpretation."],
                 urgency: "medium",
-                disclaimer: "This is not medical advice.",
+                disclaimer: "This is not medical advice. Please consult a healthcare professional.",
             };
         }
     }
