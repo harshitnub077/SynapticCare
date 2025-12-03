@@ -1,0 +1,86 @@
+{
+    "labTests": {
+        "hemoglobin": {
+            "aliases": [
+                "hb",
+                "hemoglobin",
+                "haemoglobin"
+            ],
+            "unit": "g/dL",
+            "normalRange": {
+                "male": {
+                    "min": 13.5,
+                    "max": 17.5
+                },
+                "female": {
+                    "min": 12.0,
+                    "max": 15.5
+                }
+            }
+        },
+        "wbc": {
+            "aliases": [
+                "wbc",
+                "white blood cells",
+                "leukocytes"
+            ],
+            "unit": "cells/μL",
+            "normalRange": {
+                "min": 4000,
+                "max": 11000
+            }
+        },
+        "rbc": {
+            "aliases": [
+                "rbc",
+                "red blood cells",
+                "erythrocytes"
+            ],
+            "unit": "million cells/μL",
+            "normalRange": {
+                "male": {
+                    "min": 4.7,
+                    "max": 6.1
+                },
+                "female": {
+                    "min": 4.2,
+                    "max": 5.4
+                }
+            }
+        },
+        "platelets": {
+            "aliases": [
+                "platelets",
+                "platelet count"
+            ],
+            "unit": "cells/μL",
+            "normalRange": {
+                "min": 150000,
+                "max": 450000
+            }
+        },
+        "glucose": {
+            "aliases": [
+                "glucose",
+                "blood sugar",
+                "fasting glucose"
+            ],
+            "unit": "mg/dL",
+            "normalRange": {
+                "min": 70,
+                "max": 100
+            }
+        },
+        "cholesterol": {
+            "aliases": [
+                "cholesterol",
+                "total cholesterol"
+            ],
+            "unit": "mg/dL",
+            "normalRange": {
+                "min": 0,
+                "max": 200
+            }
+        }
+    }
+}

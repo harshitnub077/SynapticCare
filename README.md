@@ -6,14 +6,16 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
 
 ### 🧠 AI Health Assistant
 - Ask health questions in natural language  
-- AI-generated summaries & recommendations  
+- AI-generated summaries & recommendations (powered by OpenAI GPT-3.5)
 - Symptom analysis  
+- **Demo Mode**: Works with basic rule-based responses without API key
 
 ### 🩺 Medical Report Analyzer
 - Upload PDFs/images  
-- Automatic text extraction  
+- Automatic text extraction (OCR)
 - AI-powered structured health summary  
 - Detect abnormalities (e.g., low hemoglobin, high WBC)
+- Flag values outside normal ranges
 
 ### 🔐 Authentication (JWT)
 - User login/signup  
@@ -64,6 +66,9 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
 ### Prerequisites
 - Node.js (v18+)
 - npm
+- **OpenAI API Key** (optional, but recommended for full AI functionality)
+  - Get yours at: https://platform.openai.com/api-keys
+  - ⚠️ **Note**: The app will run in "Demo Mode" without an API key (limited AI responses)
 
 ### Backend Setup
 1.  Navigate to the backend directory:
@@ -74,16 +79,29 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
     ```bash
     npm install
     ```
-3.  Create a `.env` file (copy from `.env.example`) and add your secrets:
+3.  Create a `.env` file (copy from `.env.example`):
     ```bash
     cp .env.example .env
     ```
-    *Note: Ensure `DATABASE_URL="file:./dev.db"` for local SQLite.*
-4.  Run Database Migrations:
+4.  **Configure Environment Variables** in `.env`:
+    ```env
+    DATABASE_URL="file:./dev.db"
+    JWT_SECRET="your-secret-key-here"
+    JWT_EXPIRES_IN="3600"
+    OPENAI_API_KEY="sk-your-openai-api-key-here"  # Required for AI features
+    PORT="5050"
+    CLIENT_ORIGIN="http://localhost:5173"
+    ```
+    
+    **Important:** 
+    - Without `OPENAI_API_KEY`, the chat assistant runs in **Demo Mode** with rule-based responses
+    - Add your OpenAI API key for full AI-powered medical analysis
+
+5.  Run Database Migrations:
     ```bash
     npx prisma migrate dev --name init
     ```
-5.  Start the Server:
+6.  Start the Server:
     ```bash
     npm run dev
     ```

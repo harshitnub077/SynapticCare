@@ -29,6 +29,10 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api/v1/auth", authRoutes);
+const reportRoutes = require("./routes/reportRoutes");
+app.use("/api/v1/reports", reportRoutes);
+const assistantRoutes = require("./routes/assistantRoutes");
+app.use("/api/v1/assistant", assistantRoutes);
 
 app.get("/", (req, res) => {
     res.send("SynapticCare+ Backend is running 🚀");
