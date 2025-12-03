@@ -41,7 +41,6 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
 - **Styling**: Tailwind CSS
 - **State Management**: React Hooks
 - **HTTP Client**: Axios
-- **Charts**: Recharts
 
 ### Backend
 - **Runtime**: Node.js
@@ -49,8 +48,6 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
 - **Database**: SQLite (Local) / PostgreSQL (Production)
 - **ORM**: Prisma
 - **Auth**: JSON Web Tokens (JWT)
-- **AI**: OpenAI API
-- **File Upload**: Multer
 
 ---
 
@@ -61,40 +58,8 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
 
 ---
 
-## Setup & Installation
-
-### Prerequisites
-- Node.js (v18+)
-- npm
-- **OpenAI API Key** (optional, but recommended for full AI functionality)
-  - Get yours at: https://platform.openai.com/api-keys
-  - ⚠️ **Note**: The app will run in "Demo Mode" without an API key (limited AI responses)
-
-### Backend Setup
-1.  Navigate to the backend directory:
-    ```bash
-    cd backend
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Create a `.env` file (copy from `.env.example`):
-    ```bash
-    cp .env.example .env
-    ```
-4.  **Configure Environment Variables** in `.env`:
-    ```env
-    DATABASE_URL="file:./dev.db"
-    JWT_SECRET="your-secret-key-here"
-    JWT_EXPIRES_IN="3600"
-    OPENAI_API_KEY="sk-your-openai-api-key-here"  # Required for AI features
-    PORT="5050"
-    CLIENT_ORIGIN="http://localhost:5173"
-    ```
-    
     **Important:** 
-    - Without `OPENAI_API_KEY`, the chat assistant runs in **Demo Mode** with rule-based responses
+    - Without `gemini_api_key`, the chat assistant runs in **Demo Mode** with rule-based responses
     - Add your OpenAI API key for full AI-powered medical analysis
 
 5.  Run Database Migrations:
@@ -122,16 +87,10 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
     ```
     The app will run on `http://localhost:5173`.
 
-## Docker Setup (Optional)
-To run the entire stack using Docker:
-```bash
-docker-compose up --build
-```
 
 ## API Endpoints
 - `POST /api/v1/auth/signup`: Create a new account
 - `POST /api/v1/auth/login`: Login to an existing account
 - `GET /api/v1/users/me`: Get current user profile
 
-## License
-ISC
+
