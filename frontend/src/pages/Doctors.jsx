@@ -14,16 +14,27 @@ const Doctors = () => {
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
 
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const limit = 9; // 9 doctors per page
+
     // Debounce search
     const [debouncedSearch, setDebouncedSearch] = useState(search);
     useEffect(() => {
-        const timer = setTimeout(() => setDebouncedSearch(search), 500);
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1); // Reset to page 1 on search
+        }, 500);
         return () => clearTimeout(timer);
     }, [search]);
 
     useEffect(() => {
+        setPage(1); // Reset to page 1 on filter change
+    }, [filters]);
+
+    useEffect(() => {
         fetchDoctors();
-    }, [debouncedSearch, filters]);
+    }, [debouncedSearch, filters, page]);
 
     const fetchDoctors = async () => {
         setLoading(true);
@@ -32,9 +43,12 @@ const Doctors = () => {
             if (debouncedSearch) params.append("search", debouncedSearch);
             if (filters.specialization) params.append("specialization", filters.specialization);
             if (filters.sortBy) params.append("sortBy", filters.sortBy);
+            params.append("page", page);
+            params.append("limit", limit);
 
             const response = await api.get(`/doctors?${params.toString()}`);
             setDoctors(response.data.doctors);
+            setTotalPages(response.data.pagination.pages);
         } catch (error) {
             console.error("Failed to fetch doctors:", error);
         } finally {
@@ -119,15 +133,38 @@ const Doctors = () => {
                         No doctors found. Try adjusting your filters.
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {doctors.map((doctor) => (
-                            <DoctorCard
-                                key={doctor.id}
-                                doctor={doctor}
-                                onBook={setSelectedDoctor}
-                            />
-                        ))}
-                    </div>
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            {doctors.map((doctor) => (
+                                <DoctorCard
+                                    key={doctor.id}
+                                    doctor={doctor}
+                                    onBook={setSelectedDoctor}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Pagination Controls */}
+                        <div className="flex justify-center items-center space-x-4">
+                            <button
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                disabled={page === 1}
+                                className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Previous
+                            </button>
+                            <span className="text-gray-600">
+                                Page {page} of {totalPages}
+                            </span>
+                            <button
+                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                disabled={page === totalPages}
+                                className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </>
                 )}
             </div>
 

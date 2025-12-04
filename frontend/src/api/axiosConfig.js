@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5050/api/v1',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5050/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -28,19 +28,35 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log('[Axios Error]', {
+      status: error.response?.status,
+      url: error.config?.url,
+      method: error.config?.method,
+      message: error.response?.data?.message || error.message
+    });
+
     if (error.response?.status === 401) {
       // Token expired or invalid
       const currentPath = window.location.pathname;
+      console.log('[Auth Error] 401 Unauthorized at path:', currentPath);
       localStorage.removeItem('token');
-      
-      // Only redirect if not already on login page and not during initial load
+      localStorage.removeItem('userRole');
+
+      // Only redirect if not already on login page
       if (currentPath !== '/login' && !currentPath.includes('/login')) {
+        console.log('[Auth Error] Redirecting to login...');
         // Use a small delay to allow error message to show
         setTimeout(() => {
           window.location.href = '/login';
         }, 100);
       }
     }
+
+    // For 404 errors, don't redirect - just reject
+    if (error.response?.status === 404) {
+      console.error('[404 Error] Resource not found:', error.config?.url);
+    }
+
     return Promise.reject(error);
   }
 );

@@ -8,6 +8,7 @@ router.post("/", authMiddleware, appointmentController.bookAppointment);
 router.get("/", authMiddleware, appointmentController.getMyAppointments);
 router.get("/doctor", authMiddleware, appointmentController.getDoctorAppointments); // New route
 router.put("/status/:id", authMiddleware, appointmentController.updateAppointmentStatus); // New route
+router.put("/:id/reschedule", authMiddleware, appointmentController.updateAppointmentDate);
 router.delete("/:id", authMiddleware, appointmentController.cancelAppointment);
 
 module.exports = router;

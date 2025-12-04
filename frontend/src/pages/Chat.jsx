@@ -27,7 +27,7 @@ const Chat = () => {
 
     const fetchHistory = async () => {
         try {
-            const response = await api.get("/assistant/history");
+            const response = await api.get("/chat");
             const history = response.data.messages || [];
             setSavedHistory(history);
             if (history.length === 0) {
@@ -63,15 +63,15 @@ const Chat = () => {
 
         try {
             const response = await api.post(
-                "/assistant/chat",
+                "/chat",
                 { message: userMessage }
             );
 
             // Add AI response
             const aiMessage = {
                 role: "assistant",
-                message: response.data.message,
-                createdAt: new Date().toISOString(),
+                message: response.data.aiMessage.message,
+                createdAt: response.data.aiMessage.createdAt,
             };
             setMessages((prev) => [...prev, aiMessage]);
         } catch (error) {
@@ -100,8 +100,26 @@ const Chat = () => {
         <div className="min-h-screen bg-slate-50 flex flex-col">
             {/* Header */}
             <div className="bg-white border-b border-slate-200 px-4 py-4">
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto flex justify-between items-center">
                     <h1 className="text-lg font-semibold text-slate-900">Chat</h1>
+                    <button
+                        onClick={async () => {
+                            if (window.confirm("Are you sure you want to clear your chat history?")) {
+                                try {
+                                    await api.delete("/chat");
+                                    setMessages([]);
+                                    setSavedHistory([]);
+                                    setChatMode("new");
+                                } catch (err) {
+                                    console.error("Failed to clear history:", err);
+                                    alert("Failed to clear chat history.");
+                                }
+                            }
+                        }}
+                        className="text-sm text-red-600 hover:text-red-700 font-medium"
+                    >
+                        Clear History
+                    </button>
                 </div>
             </div>
 

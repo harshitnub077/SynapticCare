@@ -14,6 +14,12 @@ const router = express.Router();
 // All routes require authentication
 router.use(authMiddleware);
 
+// Logging middleware (for debugging)
+router.use((req, res, next) => {
+    console.log(`[Report API] ${req.method} ${req.url}`);
+    next();
+});
+
 // Upload route with error handling
 router.post("/", (req, res, next) => {
     upload.single("file")(req, res, (err) => {
@@ -31,6 +37,7 @@ router.post("/", (req, res, next) => {
         next();
     });
 }, uploadReport);
+
 router.get("/", getReports);
 router.get("/:id", getReportById);
 router.delete("/:id", deleteReport);

@@ -153,10 +153,53 @@ const updateAppointmentStatus = async (req, res) => {
     }
 };
 
+// Update appointment date
+const updateAppointmentDate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { date, time } = req.body;
+        const userId = req.userId;
+
+        const appointment = await prisma.appointment.findUnique({ where: { id } });
+        if (!appointment) return res.status(404).json({ message: "Appointment not found" });
+        if (appointment.userId !== userId) return res.status(403).json({ message: "Unauthorized" });
+
+        // Check availability for new slot
+        const existingAppointment = await prisma.appointment.findFirst({
+            where: {
+                doctorId: appointment.doctorId,
+                date: new Date(date),
+                time,
+                status: { not: "cancelled" },
+                id: { not: id } // Exclude current appointment
+            },
+        });
+
+        if (existingAppointment) {
+            return res.status(409).json({ message: "Time slot already booked" });
+        }
+
+        const updatedAppointment = await prisma.appointment.update({
+            where: { id },
+            data: {
+                date: new Date(date),
+                time,
+                status: "booked" // Reset status to booked if it was confirmed/cancelled
+            },
+        });
+
+        res.json({ message: "Appointment rescheduled successfully", appointment: updatedAppointment });
+    } catch (error) {
+        console.error("Update Appointment Date Error:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
 module.exports = {
     bookAppointment,
     getMyAppointments,
     cancelAppointment,
     getDoctorAppointments,
-    updateAppointmentStatus
+    updateAppointmentStatus,
+    updateAppointmentDate
 };

@@ -53,6 +53,17 @@ const ReportDetail = () => {
     const abnormalities = report.flags?.abnormalities || [];
     const aiInsights = report.flags?.aiInsights;
 
+    // Debug logging
+    console.log('[ReportDetail] Report data:', {
+        id: report.id,
+        status: report.status,
+        hasFlags: !!report.flags,
+        hasAbnormalities: !!abnormalities.length,
+        hasAIInsights: !!aiInsights,
+        aiInsightsSummaryLength: aiInsights?.summary?.length || 0,
+        flagsStructure: report.flags
+    });
+
     return (
         <div className="min-h-screen bg-slate-50 py-8">
             <div className="max-w-4xl mx-auto px-4">
@@ -78,10 +89,10 @@ const ReportDetail = () => {
                         </div>
                         <span
                             className={`px-3 py-1 rounded-full text-sm font-medium ${report.status === "done"
-                                    ? "bg-green-100 text-green-800"
-                                    : report.status === "processing"
-                                        ? "bg-blue-100 text-blue-800"
-                                        : "bg-red-100 text-red-800"
+                                ? "bg-green-100 text-green-800"
+                                : report.status === "processing"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : "bg-red-100 text-red-800"
                                 }`}
                         >
                             {report.status}
@@ -90,12 +101,45 @@ const ReportDetail = () => {
                 </div>
 
                 {/* Report Summary */}
-                {aiInsights && (
+                {report.status === "processing" ? (
+                    <div className="bg-blue-50 rounded-lg shadow-sm p-6 mb-6 border border-blue-200">
+                        <div className="flex items-center space-x-3">
+                            <Loader className="h-6 w-6 text-blue-600 animate-spin" />
+                            <div>
+                                <h2 className="text-lg font-semibold text-blue-900">Processing Report...</h2>
+                                <p className="text-sm text-blue-700 mt-1">
+                                    Our AI is analyzing your medical report. This usually takes 10-30 seconds.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={fetchReport}
+                            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                        >
+                            Check Status
+                        </button>
+                    </div>
+                ) : report.status === "error" ? (
+                    <div className="bg-red-50 rounded-lg shadow-sm p-6 mb-6 border border-red-200">
+                        <div className="flex items-start space-x-3">
+                            <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0" />
+                            <div>
+                                <h2 className="text-lg font-semibold text-red-900">Processing Error</h2>
+                                <p className="text-sm text-red-700 mt-1">
+                                    {report.extractedText || "There was an error processing your report. The image may be unclear or the format may not be supported."}
+                                </p>
+                                <p className="text-sm text-red-600 mt-2">
+                                    Please try uploading a clearer image or a different file format.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ) : aiInsights ? (
                     <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-slate-200">
                         <div className="mb-4">
-                            <h2 className="text-xl font-semibold text-slate-900">Report Summary</h2>
+                            <h2 className="text-xl font-semibold text-slate-900">AI Report Analysis</h2>
                         </div>
-                        
+
                         <div className="space-y-4">
                             {/* Summary */}
                             <div className="text-slate-700 leading-relaxed whitespace-pre-line">
@@ -126,6 +170,20 @@ const ReportDetail = () => {
                                 </div>
                             )}
 
+                            {/* Urgency Badge */}
+                            {aiInsights.urgency && (
+                                <div className="pt-3">
+                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${aiInsights.urgency === 'high' ? 'bg-red-100 text-red-800' :
+                                        aiInsights.urgency === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                            'bg-green-100 text-green-800'
+                                        }`}>
+                                        {aiInsights.urgency === 'high' ? '⚠️ High Priority' :
+                                            aiInsights.urgency === 'medium' ? '⚡ Medium Priority' :
+                                                '✓ Low Priority'}
+                                    </span>
+                                </div>
+                            )}
+
                             {/* Disclaimer */}
                             <div className="pt-3 border-t border-slate-200">
                                 <p className="text-xs text-slate-500">
@@ -134,7 +192,27 @@ const ReportDetail = () => {
                             </div>
                         </div>
                     </div>
-                )}
+                ) : report.status === "done" ? (
+                    <div className="bg-amber-50 rounded-lg shadow-sm p-6 mb-6 border border-amber-200">
+                        <div className="flex items-start space-x-3">
+                            <AlertTriangle className="h-6 w-6 text-amber-600 flex-shrink-0" />
+                            <div>
+                                <h2 className="text-lg font-semibold text-amber-900">Limited Analysis Available</h2>
+                                <p className="text-sm text-amber-700 mt-1">
+                                    The report was processed, but AI analysis is not available. This might be because:
+                                </p>
+                                <ul className="text-sm text-amber-700 mt-2 list-disc list-inside space-y-1">
+                                    <li>No recognizable test values were found in the image</li>
+                                    <li>The image quality was too low to extract text accurately</li>
+                                    <li>The AI service was temporarily unavailable</li>
+                                </ul>
+                                <p className="text-sm text-amber-600 mt-3">
+                                    You can still view any extracted data below, or try uploading a clearer image.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
 
                 {/* Abnormalities */}
                 {abnormalities.length > 0 && (
@@ -145,8 +223,8 @@ const ReportDetail = () => {
                                 <div
                                     key={idx}
                                     className={`flex items-start p-4 rounded-lg ${flag.status === "high"
-                                            ? "bg-red-50 border border-red-200"
-                                            : "bg-amber-50 border border-amber-200"
+                                        ? "bg-red-50 border border-red-200"
+                                        : "bg-amber-50 border border-amber-200"
                                         }`}
                                 >
                                     <AlertTriangle

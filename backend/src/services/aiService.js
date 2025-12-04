@@ -65,12 +65,12 @@ class AIService {
             // Build comprehensive prompt for patient summary
             const hasAbnormalities = flags && flags.length > 0;
             const hasData = parsedData && parsedData.length > 0;
-            
+
             let dataContext = "";
             if (hasData) {
                 dataContext = `\n\nLABORATORY RESULTS FOUND:\n${JSON.stringify(parsedData, null, 2)}`;
             }
-            
+
             // Always include the FULL extracted text for comprehensive analysis
             if (rawText && rawText.trim().length > 0) {
                 // Use the complete extracted text - Gemini can handle large contexts
@@ -160,7 +160,7 @@ OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
             const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 const parsed = JSON.parse(jsonMatch[0]);
-                
+
                 // Ensure all required fields exist
                 return {
                     summary: parsed.summary || "Report analysis completed. Please review the detailed findings below.",
@@ -194,7 +194,10 @@ OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
     /**
      * Chat with AI assistant
      */
-    async chat(userMessage, reportContext = null) {
+    /**
+     * Chat with AI assistant
+     */
+    async getChatResponse(userMessage, context = []) {
         if (!model) {
             console.log("⚠️ Gemini not configured. Using mock response.");
 
@@ -223,17 +226,27 @@ OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
         try {
             let prompt = SYSTEM_PROMPT + "\n\n";
 
-            if (reportContext) {
-                prompt += `User's Report Context: ${JSON.stringify(reportContext)}\n\n`;
+            // Add chat history context
+            if (context && context.length > 0) {
+                prompt += "PREVIOUS CONVERSATION:\n";
+                context.forEach(msg => {
+                    const role = msg.role === "user" ? "User" : "Assistant";
+                    prompt += `${role}: ${msg.content}\n`;
+                });
+                prompt += "\n";
             }
 
             prompt += `User: ${userMessage}\n\nAssistant:`;
 
+            console.log(`[AI Service] Calling Gemini API with prompt length: ${prompt.length}`);
             const result = await model.generateContent(prompt);
             const response = await result.response;
-            return response.text();
+            const text = response.text();
+            console.log(`[AI Service] Received response length: ${text.length}`);
+            return text;
         } catch (error) {
-            console.error("Chat API error:", error);
+            console.error("[AI Service] Chat API error:", error.message);
+            console.error("[AI Service] Error details:", error);
             return "I'm having trouble processing your request. Please try again later.";
         }
     }

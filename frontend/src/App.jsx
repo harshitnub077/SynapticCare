@@ -12,6 +12,7 @@ import Appointments from "./pages/Appointments";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import DoctorDashboard from "./pages/DoctorDashboard";
+import TestUpload from "./pages/TestUpload";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -72,6 +73,7 @@ function App() {
             <Route path="/chat" element={<Chat />} />
             <Route path="/doctors" element={<Doctors />} />
             <Route path="/appointments" element={<Appointments />} />
+            <Route path="/test-upload" element={<TestUpload />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
         )}

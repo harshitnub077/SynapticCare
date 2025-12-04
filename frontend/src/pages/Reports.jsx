@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileText, Clock, AlertCircle, CheckCircle, Loader } from "lucide-react";
+import { FileText, Clock, AlertCircle, CheckCircle, Loader, Plus, Calendar, ChevronRight, AlertTriangle, Trash2 } from "lucide-react";
 import api from "../api/axiosConfig";
 
 const Reports = () => {
@@ -21,7 +21,7 @@ const Reports = () => {
                 fetchReports();
             }
         }, 3000);
-        
+
         return () => clearInterval(interval);
     }, [reports]);
 
@@ -68,48 +68,53 @@ const Reports = () => {
         }
     };
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader className="h-8 w-8 text-blue-600 animate-spin" />
-            </div>
-        );
-    }
+    const handleDelete = async (id, e) => {
+        e.stopPropagation(); // Prevent navigation when clicking delete
+        if (!window.confirm("Are you sure you want to delete this report?")) return;
+
+        try {
+            const token = localStorage.getItem("token");
+            await api.delete(`/reports/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            // Remove from state
+            setReports(reports.filter(r => r.id !== id));
+        } catch (err) {
+            console.error("Failed to delete report:", err);
+            alert("Failed to delete report.");
+        }
+    };
+
+    if (loading) return <div className="p-8 text-center text-slate-500">Loading reports...</div>;
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8">
-            <div className="max-w-7xl mx-auto px-4">
+        <div className="min-h-screen bg-slate-50 p-6">
+            <div className="max-w-5xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-slate-900">My Reports</h1>
-                        <p className="text-slate-600 mt-1">View and manage your medical reports</p>
-                    </div>
+                    <h1 className="text-2xl font-bold text-slate-900">My Medical Reports</h1>
                     <button
                         onClick={() => navigate("/upload")}
-                        className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+                        className="btn-medical-primary"
                     >
+                        <Plus className="h-5 w-5 mr-2" />
                         Upload New Report
                     </button>
                 </div>
 
                 {error && (
-                    <div className="bg-red-50 text-red-800 p-4 rounded-md mb-6">
+                    <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 border border-red-200">
                         {error}
                     </div>
                 )}
 
                 {reports.length === 0 ? (
-                    <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                        <FileText className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-                        <h3 className="text-xl font-medium text-slate-900 mb-2">
-                            No reports yet
-                        </h3>
-                        <p className="text-slate-600 mb-6">
-                            Upload your first medical report to get started
-                        </p>
+                    <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-slate-200">
+                        <FileText className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-slate-900 mb-2">No reports yet</h3>
+                        <p className="text-slate-500 mb-6">Upload your first medical report to get AI insights.</p>
                         <button
                             onClick={() => navigate("/upload")}
-                            className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+                            className="btn-medical-primary mx-auto"
                         >
                             Upload Report
                         </button>
@@ -120,31 +125,51 @@ const Reports = () => {
                             <div
                                 key={report.id}
                                 onClick={() => navigate(`/reports/${report.id}`)}
-                                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer border border-slate-100"
+                                className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all cursor-pointer group"
                             >
-                                <div className="flex items-start justify-between">
-                                    <div className="flex items-start space-x-4 flex-1">
-                                        <FileText className="h-10 w-10 text-blue-600 flex-shrink-0" />
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="text-lg font-medium text-slate-900 truncate">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="p-3 bg-blue-50 rounded-lg">
+                                            <FileText className="h-6 w-6 text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium text-slate-900 group-hover:text-blue-600 transition-colors">
                                                 {report.filename}
                                             </h3>
-                                            <p className="text-sm text-slate-500 mt-1">
-                                                Uploaded {new Date(report.uploadedAt).toLocaleDateString()}
-                                            </p>
-                                            {report.flags?.abnormalities?.length > 0 && (
-                                                <div className="flex items-center mt-2 text-sm text-amber-600">
-                                                    <AlertCircle className="h-4 w-4 mr-1" />
-                                                    {report.flags.abnormalities.length} abnormality(ies) detected
-                                                </div>
-                                            )}
+                                            <div className="flex items-center text-sm text-slate-500 mt-1">
+                                                <Calendar className="h-3.5 w-3.5 mr-1" />
+                                                {new Date(report.uploadedAt).toLocaleDateString()}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center space-x-2 ml-4">
-                                        {getStatusIcon(report.status)}
-                                        <span className="text-sm font-medium text-slate-700">
-                                            {getStatusText(report.status)}
-                                        </span>
+                                    <div className="flex items-center gap-4">
+                                        {report.status === "processing" ? (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                Processing...
+                                            </span>
+                                        ) : report.status === "error" ? (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <AlertCircle className="h-3 w-3 mr-1" />
+                                                Error
+                                            </span>
+                                        ) : report.flags?.abnormalities?.length > 0 ? (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                                Attention Needed
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Normal
+                                            </span>
+                                        )}
+                                        <button
+                                            onClick={(e) => handleDelete(report.id, e)}
+                                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                                            title="Delete Report"
+                                        >
+                                            <Trash2 className="h-5 w-5" />
+                                        </button>
+                                        <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-slate-500" />
                                     </div>
                                 </div>
                             </div>
