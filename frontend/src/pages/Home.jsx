@@ -50,18 +50,24 @@ const Home = ({ onLogout }) => {
             <p className="max-w-2xl mx-auto text-slate-600">
               Upload and manage your medical reports
             </p>
-            <div className="mt-8 flex justify-center gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto mt-8">
               <button
-                onClick={() => navigate("/upload")}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                onClick={() => navigate("/doctors")}
+                className="btn-medical-primary w-full"
               >
-                Upload Report
+                Find a Doctor
+              </button>
+              <button
+                onClick={() => navigate("/appointments")}
+                className="btn-medical-secondary w-full"
+              >
+                My Appointments
               </button>
               <button
                 onClick={() => navigate("/chat")}
-                className="px-6 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 text-sm"
+                className="btn-medical-secondary w-full md:col-span-2"
               >
-                Chat
+                Chat with AI Assistant
               </button>
             </div>
           </div>

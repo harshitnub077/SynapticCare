@@ -7,6 +7,9 @@ import UploadReport from "./pages/UploadReport";
 import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import Chat from "./pages/Chat";
+import Doctors from "./pages/Doctors";
+import Appointments from "./pages/Appointments";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -46,6 +49,8 @@ function App() {
             <Route path="/reports" element={<Reports />} />
             <Route path="/reports/:id" element={<ReportDetail />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/doctors" element={<Doctors />} />
+            <Route path="/appointments" element={<Appointments />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
         )}
