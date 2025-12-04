@@ -11,26 +11,43 @@ import Doctors from "./pages/Doctors";
 import Appointments from "./pages/Appointments";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import DoctorDashboard from "./pages/DoctorDashboard";
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     Boolean(localStorage.getItem("token"))
   );
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setIsAuthenticated(Boolean(localStorage.getItem("token")));
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      setIsAuthenticated(Boolean(token));
+
+      if (token) {
+        // Decode token to get role or fetch user profile
+        // For simplicity, we'll fetch the user profile or store role in localStorage on login
+        // Let's assume we store it in localStorage for now to keep it simple
+        const storedRole = localStorage.getItem("userRole");
+        setUserRole(storedRole);
+      }
     };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+
+    checkAuth();
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
   }, []);
 
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
+    setUserRole(localStorage.getItem("userRole"));
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
     setIsAuthenticated(false);
+    setUserRole(null);
   };
 
   return (
@@ -43,7 +60,11 @@ function App() {
           </>
         ) : (
           <>
-            <Route path="/" element={<Home onLogout={handleLogout} />} />
+            {userRole === "doctor" ? (
+              <Route path="/" element={<DoctorDashboard onLogout={handleLogout} />} />
+            ) : (
+              <Route path="/" element={<Home onLogout={handleLogout} />} />
+            )}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<UploadReport />} />
             <Route path="/reports" element={<Reports />} />

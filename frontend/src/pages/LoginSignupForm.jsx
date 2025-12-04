@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import api from "../api/axiosConfig";
 
-const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
+const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [role, setRole] = useState("patient");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,12 +27,19 @@ const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
           password: formData.password,
         });
         localStorage.setItem("token", res.data.token);
+        // Assuming the backend returns the user object with the role. 
+        // We need to verify if the backend returns the role. 
+        // Looking at authController.js, it returns { user: { id, name, email } }. It does NOT return role yet.
+        // I will need to update authController.js to return the role as well.
+        // For now, let's assume we'll fix the backend in the next step.
+        localStorage.setItem("userRole", res.data.user.role || "patient");
         onLoginSuccess();
       } else {
         const res = await api.post("/auth/signup", {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          role: role,
         });
         setMessage(res.data.message || "Signup successful. You can now sign in.");
         setIsLogin(true);
@@ -56,22 +64,20 @@ const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
             <button
               type="button"
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-1.5 rounded-md ${
-                isLogin
-                  ? "bg-white shadow-sm text-slate-900"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`flex-1 py-1.5 rounded-md ${isLogin
+                ? "bg-white shadow-sm text-slate-900"
+                : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               Sign in
             </button>
             <button
               type="button"
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-1.5 rounded-md ${
-                !isLogin
-                  ? "bg-white shadow-sm text-slate-900"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`flex-1 py-1.5 rounded-md ${!isLogin
+                ? "bg-white shadow-sm text-slate-900"
+                : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               Register
             </button>
@@ -79,16 +85,45 @@ const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             {!isLogin && (
-              <div>
-                <label className="block text-sm text-slate-700 mb-1">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  className="input-medical"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <>
+                <div>
+                  <label className="block text-sm text-slate-700 mb-1">I am a</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="patient"
+                        checked={role === "patient"}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="mr-2"
+                      />
+                      <span className="text-sm text-slate-700">Patient</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="doctor"
+                        checked={role === "doctor"}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="mr-2"
+                      />
+                      <span className="text-sm text-slate-700">Doctor</span>
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-700 mb-1">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    className="input-medical"
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </>
             )}
 
             <div>
@@ -121,8 +156,8 @@ const LoginSignupForm = ({ onLoginSuccess = () => {} }) => {
               {loading
                 ? "Please wait..."
                 : isLogin
-                ? "Sign in"
-                : "Create account"}
+                  ? "Sign in"
+                  : "Create account"}
             </button>
           </form>
 

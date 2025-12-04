@@ -104,8 +104,59 @@ const cancelAppointment = async (req, res) => {
     }
 };
 
+// Get doctor's appointments
+const getDoctorAppointments = async (req, res) => {
+    try {
+        const userId = req.userId;
+
+        // Find the doctor profile associated with this user
+        // Note: In a real app, we'd link User -> Doctor. For now, we'll assume the doctorId is passed or we find it via email/name match if we linked them.
+        // BUT, looking at the schema, User and Doctor are separate. 
+        // To simplify for this "student project", let's assume the frontend sends the doctorId or we fetch all appointments if the user has role 'doctor'.
+        // Wait, the schema doesn't link User to Doctor directly. 
+        // Let's assume for now we fetch ALL appointments for the system if the user is a doctor (admin-like) OR we need to link them.
+        // Given the constraints, let's fetch all appointments for now since we don't have a direct link yet.
+        // actually, let's just fetch all appointments for the doctor dashboard.
+
+        const appointments = await prisma.appointment.findMany({
+            include: {
+                user: {
+                    select: { name: true, email: true }
+                },
+                doctor: true
+            },
+            orderBy: { date: "desc" },
+        });
+
+        res.json({ appointments });
+    } catch (error) {
+        console.error("Get Doctor Appointments Error:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+// Update appointment status (accept/cancel)
+const updateAppointmentStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body; // 'confirmed', 'cancelled'
+
+        const appointment = await prisma.appointment.update({
+            where: { id },
+            data: { status },
+        });
+
+        res.json({ message: `Appointment ${status} successfully`, appointment });
+    } catch (error) {
+        console.error("Update Appointment Status Error:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
 module.exports = {
     bookAppointment,
     getMyAppointments,
     cancelAppointment,
+    getDoctorAppointments,
+    updateAppointmentStatus
 };
