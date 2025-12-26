@@ -43,12 +43,14 @@ api.interceptors.response.use(
       localStorage.removeItem('userRole');
 
       // Only redirect if not already on login page
+      // RELAXED REDIRECT: Just warn for now to debug
+      console.warn('[Auth Error] 401 detected. Token removed.');
+
       if (currentPath !== '/login' && !currentPath.includes('/login')) {
-        console.log('[Auth Error] Redirecting to login...');
-        // Use a small delay to allow error message to show
-        setTimeout(() => {
+        const shouldRedirect = window.confirm("Your session has expired. Click OK to login again.");
+        if (shouldRedirect) {
           window.location.href = '/login';
-        }, 100);
+        }
       }
     }
 

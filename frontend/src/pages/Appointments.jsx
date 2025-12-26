@@ -153,45 +153,66 @@ const Appointments = () => {
             {/* Reschedule Modal */}
             {rescheduleModalOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Reschedule Appointment</h3>
-                        <form onSubmit={handleRescheduleSubmit} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">New Date</label>
-                                <input
-                                    type="date"
-                                    required
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                    value={rescheduleData.date}
-                                    onChange={(e) => setRescheduleData({ ...rescheduleData, date: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">New Time</label>
-                                <input
-                                    type="time"
-                                    required
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                    value={rescheduleData.time}
-                                    onChange={(e) => setRescheduleData({ ...rescheduleData, time: e.target.value })}
-                                />
-                            </div>
-                            <div className="flex justify-end gap-3 mt-6">
-                                <button
-                                    type="button"
-                                    onClick={() => setRescheduleModalOpen(false)}
-                                    className="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg font-medium"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-                                >
-                                    Confirm Reschedule
-                                </button>
-                            </div>
-                        </form>
+                    <div className="bg-white rounded-xl max-w-md w-full overflow-hidden shadow-2xl transform transition-all">
+                        <div className="bg-blue-600 px-6 py-4 flex items-center justify-between">
+                            <h3 className="text-lg font-bold text-white">Reschedule Appointment</h3>
+                            <button
+                                onClick={() => setRescheduleModalOpen(false)}
+                                className="text-white hover:text-blue-100 transition-colors"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="p-6">
+                            <p className="text-slate-600 mb-6 text-sm">
+                                Choose a new date and time for your appointment. previous booking will be updated.
+                            </p>
+
+                            <form onSubmit={handleRescheduleSubmit} className="space-y-5">
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Select Date</label>
+                                    <div className="relative">
+                                        <input
+                                            type="date"
+                                            required
+                                            min={new Date().toISOString().split("T")[0]}
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                            value={rescheduleData.date}
+                                            onChange={(e) => setRescheduleData({ ...rescheduleData, date: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Select Time</label>
+                                    <div className="relative">
+                                        <input
+                                            type="time"
+                                            required
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                            value={rescheduleData.time}
+                                            onChange={(e) => setRescheduleData({ ...rescheduleData, time: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
+                                    <button
+                                        type="button"
+                                        onClick={() => setRescheduleModalOpen(false)}
+                                        className="px-5 py-2.5 text-slate-700 hover:bg-slate-100 rounded-lg font-medium transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-lg shadow-blue-600/20 transition-all hover:translate-y-[-1px]"
+                                    >
+                                        Confirm Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}

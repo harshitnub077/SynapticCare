@@ -26,14 +26,19 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
           email: formData.email,
           password: formData.password,
         });
-        localStorage.setItem("token", res.data.token);
-        // Assuming the backend returns the user object with the role. 
-        // We need to verify if the backend returns the role. 
-        // Looking at authController.js, it returns { user: { id, name, email } }. It does NOT return role yet.
-        // I will need to update authController.js to return the role as well.
-        // For now, let's assume we'll fix the backend in the next step.
-        localStorage.setItem("userRole", res.data.user.role || "patient");
-        onLoginSuccess();
+        if (res.data && res.data.token) {
+          localStorage.setItem("token", res.data.token);
+
+          let userRole = "patient";
+          if (res.data.user && res.data.user.role) {
+            userRole = res.data.user.role;
+          }
+          localStorage.setItem("userRole", userRole);
+          onLoginSuccess();
+        } else {
+          console.error("Login response missing token or user data:", res.data);
+          setMessage("Login failed: Invalid server response.");
+        }
       } else {
         const res = await api.post("/auth/signup", {
           name: formData.name,

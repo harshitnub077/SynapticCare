@@ -27,17 +27,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes
-app.use("/api/v1/auth", authRoutes);
-const reportRoutes = require("./routes/reportRoutes");
-const assistantRoutes = require("./routes/assistantRoutes");
-const doctorRoutes = require("./routes/doctorRoutes");
-const appointmentRoutes = require("./routes/appointmentRoutes");
-
-app.use("/api/v1/reports", reportRoutes);
-app.use("/api/v1/assistant", assistantRoutes);
-app.use("/api/v1/doctors", doctorRoutes);
-app.use("/api/v1/appointments", appointmentRoutes);
+// Routes are mounted in index.js
+// app.use("/api/v1/auth", authRoutes);
+// app.use("/api/v1/reports", reportRoutes);
+// app.use("/api/v1/assistant", assistantRoutes);
+// app.use("/api/v1/doctors", doctorRoutes);
+// app.use("/api/v1/appointments", appointmentRoutes);
 
 app.get("/", (req, res) => {
     res.send("SynapticCare+ Backend is running 🚀");
