@@ -17,54 +17,79 @@ const getChatHistory = async (req, res) => {
 const sendMessage = async (req, res) => {
     try {
         const { message } = req.body;
+        const userId = req.userId;
+
         if (!message) {
             return res.status(400).json({ message: "Message is required" });
         }
+        if (!userId) {
+            console.error("[Chat] Request missing userId.");
+            return res.status(401).json({ message: "User not authenticated" });
+        }
 
-        // Save user message
-        const userMessage = await prisma.chatMessage.create({
-            data: {
-                userId: req.userId,
-                role: "user",
-                message: message,
-            },
-        });
+        console.log(`[Chat] Processing message for user ${userId}: "${message.substring(0, 20)}..."`);
 
-        // Get AI response
-        // Fetch recent history for context (last 10 messages)
-        const history = await prisma.chatMessage.findMany({
-            where: { userId: req.userId },
-            orderBy: { createdAt: "desc" },
-            take: 10,
-        });
+        // 1. Safe Save User Message (Do not block if fails)
+        let userMessage = { role: "user", message, createdAt: new Date() };
+        try {
+            userMessage = await prisma.chatMessage.create({
+                data: { userId, role: "user", message },
+            });
+        } catch (dbError) {
+            console.error("[Chat] Failed to save user message to DB (continuing anyway):", dbError.message);
+        }
 
-        // Reverse to chronological order
-        const context = history.reverse().map(m => ({
-            role: m.role,
-            content: m.message
-        }));
+        // 2. Fetch History (Safe)
+        let context = [];
+        try {
+            const history = await prisma.chatMessage.findMany({
+                where: { userId },
+                orderBy: { createdAt: "desc" },
+                take: 10,
+            });
+            context = history.reverse().map(m => ({ role: m.role, content: m.message }));
+        } catch (histError) {
+            console.warn("[Chat] Failed to fetch history (starting fresh context):", histError.message);
+        }
 
-        console.log(`[Chat] Getting AI response for user ${req.userId}, context length: ${context.length}`);
-        const aiResponseText = await aiService.getChatResponse(message, context);
-        console.log(`[Chat] AI response received, length: ${aiResponseText?.length || 0}`);
+        // 3. Get AI Response
+        console.log(`[Chat] Calling AI Service...`);
+        let aiResponseText;
+        try {
+            aiResponseText = await aiService.getChatResponse(message, context);
+            if (!aiResponseText || typeof aiResponseText !== 'string') {
+                throw new Error("AI Service returned empty or invalid response");
+            }
+        } catch (aiError) {
+            console.error("[Chat] AI Service Fatal Error:", aiError);
+            aiResponseText = "I am currently experiencing a connection issue. Please try again in a moment.";
+        }
 
-        // Save AI response
-        const aiMessage = await prisma.chatMessage.create({
-            data: {
-                userId: req.userId,
-                role: "assistant",
-                message: aiResponseText,
-            },
-        });
+        // 4. Safe Save AI Response (Do not block if fails)
+        let aiMessage = { role: "assistant", message: aiResponseText, createdAt: new Date() };
+        try {
+            aiMessage = await prisma.chatMessage.create({
+                data: { userId, role: "assistant", message: aiResponseText },
+            });
+        } catch (dbError) {
+            console.error("[Chat] Failed to save AI response to DB (continuing anyway):", dbError.message);
+        }
 
+        console.log(`[Chat] Success. Sending response.`);
+
+        // Always return 200 OK so frontend receives the message
         res.json({
             userMessage,
             aiMessage
         });
-    } catch (error) {
-        console.error("[Chat] Send message error:", error.message);
-        console.error("[Chat] Stack trace:", error.stack);
-        res.status(500).json({ message: "Failed to process message", error: error.message });
+
+    } catch (criticalError) {
+        console.error("[Chat] CRITICAL UNHANDLED ERROR:", criticalError);
+        // Even in critical failure, try to return a valid JSON to prevent frontend generic error
+        res.status(200).json({
+            userMessage: { role: "user", message: req.body.message || "" },
+            aiMessage: { role: "assistant", message: "System Critical Error: " + criticalError.message }
+        });
     }
 };
 

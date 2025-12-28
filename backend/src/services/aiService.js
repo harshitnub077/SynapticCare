@@ -3,13 +3,16 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 let genAI = null;
 let model = null;
 
-// Only initialize if API key is provided
-if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_api_key_here") {
-    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const apiKey = (process.env.GEMINI_API_KEY || "").trim();
+const isDummyKey = apiKey === "your-gemini-api-key-here" || apiKey === "your_api_key_here" || apiKey === "";
+
+if (apiKey && !isDummyKey) {
+    genAI = new GoogleGenerativeAI(apiKey);
+    // Use gemini-1.5-flash as originally intended
     model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     console.log("✅ Gemini API initialized successfully");
 } else {
-    console.warn("⚠️  Gemini API key not configured. AI features will be disabled.");
+    console.warn("⚠️  Gemini API key not configured or dummy key used. AI features will be disabled.");
 }
 
 const SYSTEM_PROMPT = `You are SynapticCare+, an advanced expert AI medical consultant designed to provide detailed, clinically accurate medical guidance. Your goal is to help patients understand their health better by asking specific medical questions and providing clear explanations of potential treatments, while maintaining safety boundaries.
@@ -45,10 +48,12 @@ class AIService {
     getModel() {
         if (model) return model;
 
-        if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_api_key_here") {
+        const apiKey = (process.env.GEMINI_API_KEY || "").trim();
+        const isDummyKey = apiKey === "your-gemini-api-key-here" || apiKey === "your_api_key_here" || apiKey === "";
+
+        if (apiKey && !isDummyKey) {
             try {
-                genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                // Switch to 1.5-flash for broader compatibility and reliability
+                genAI = new GoogleGenerativeAI(apiKey);
                 model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
                 console.log("✅ Gemini API initialized successfully (Lazy Load)");
                 return model;
@@ -252,13 +257,23 @@ OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
             const response = await result.response;
             const text = response.text();
             console.log(`[AI Service] Received response length: ${text.length}`);
-            return text;
+            return text + "\n\n_(✅ Analyzed by Gemini 1.5)_";
         } catch (error) {
-            console.error("[AI Service] Chat API error:", error.message);
+            console.error("[AI Service] Chat API error message:", error.message);
 
-            // Fallback to sophisticated mock response on ANY error (invalid key, network, etc)
+            // Safe logging to avoid circular structure errors
+            try {
+                if (error.response) console.error("API Response Error:", error.response.data);
+            } catch (e) { /* ignore log error */ }
+
+            // Detailed fallback for debugging
             console.log("[AI Service] Falling back to Mock AI response");
-            return this.getMockChatResponse(userMessage);
+            try {
+                const mockResponse = this.getMockChatResponse(userMessage);
+                return `${mockResponse}\n\n_(⚠️ Gemini Error: ${error.message} - Using Backup System)_`;
+            } catch (fallbackError) {
+                return "I'm having trouble connecting to the AI, but I'm here to help. Please try asking again.";
+            }
         }
     }
 
