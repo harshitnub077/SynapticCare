@@ -8,8 +8,8 @@ const isDummyKey = apiKey === "your-gemini-api-key-here" || apiKey === "your_api
 
 if (apiKey && !isDummyKey) {
     genAI = new GoogleGenerativeAI(apiKey);
-    // Use gemini-1.5-flash as originally intended
-    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Use gemini-2.5-flash (latest stable version)
+    model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     console.log("✅ Gemini API initialized successfully");
 } else {
     console.warn("⚠️  Gemini API key not configured or dummy key used. AI features will be disabled.");
@@ -54,7 +54,7 @@ class AIService {
         if (apiKey && !isDummyKey) {
             try {
                 genAI = new GoogleGenerativeAI(apiKey);
-                model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
                 console.log("✅ Gemini API initialized successfully (Lazy Load)");
                 return model;
             } catch (error) {
