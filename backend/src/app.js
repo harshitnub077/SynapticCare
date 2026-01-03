@@ -28,12 +28,6 @@ app.use((req, res, next) => {
 });
 
 // Routes are mounted in index.js
-// app.use("/api/v1/auth", authRoutes);
-// app.use("/api/v1/reports", reportRoutes);
-// app.use("/api/v1/assistant", assistantRoutes);
-// app.use("/api/v1/doctors", doctorRoutes);
-// app.use("/api/v1/appointments", appointmentRoutes);
-
 app.get("/", (req, res) => {
     res.send("SynapticCare+ Backend is running 🚀");
 });

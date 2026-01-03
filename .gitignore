@@ -11,3 +11,4 @@ package.json
 postman_collection.json
 API_DOCS.md
 backend/uploads/
+.DS_Store

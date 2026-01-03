@@ -73,8 +73,8 @@ const getDoctors = async (req, res) => {
         if (sortBy === "rating_desc") orderBy = { rating: "desc" };
 
         // Pagination
-        const pageNum = parseInt(page);
-        const limitNum = parseInt(limit);
+        const pageNum = Math.max(1, parseInt(page) || 1);
+        const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 10));
         const skip = (pageNum - 1) * limitNum;
 
         const [doctors, total] = await Promise.all([

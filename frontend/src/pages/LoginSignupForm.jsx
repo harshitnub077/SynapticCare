@@ -102,6 +102,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                         checked={role === "patient"}
                         onChange={(e) => setRole(e.target.value)}
                         className="mr-2"
+                        disabled={loading}
                       />
                       <span className="text-sm text-slate-700">Patient</span>
                     </label>
@@ -113,6 +114,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                         checked={role === "doctor"}
                         onChange={(e) => setRole(e.target.value)}
                         className="mr-2"
+                        disabled={loading}
                       />
                       <span className="text-sm text-slate-700">Doctor</span>
                     </label>
@@ -126,6 +128,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                     className="input-medical"
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
               </>
@@ -139,6 +142,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                 className="input-medical"
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </div>
 
@@ -150,6 +154,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                 className="input-medical"
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </div>
 
