@@ -35,11 +35,11 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-md">
         {/* Logo/Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
             SynapticCare
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-lg">
             {isLogin ? "Welcome back" : "Create your account"}
           </p>
         </div>
@@ -47,38 +47,38 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
         {/* Form Card */}
         <div className="card fade-in">
           {/* Role Selection */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+          <div className="mb-8">
+            <label className="block text-sm font-medium text-gray-700 mb-4">
               I am a:
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => setRole("patient")}
-                className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${role === "patient"
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                className={`p-5 rounded-lg border-2 transition-all flex flex-col items-center gap-3 ${role === "patient"
+                  ? "border-blue-500 bg-blue-50 text-blue-700"
+                  : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                   }`}
               >
-                <UserCircle className="w-6 h-6" />
+                <UserCircle className="w-7 h-7" />
                 <span className="text-sm font-medium">Patient</span>
               </button>
               <button
                 type="button"
                 onClick={() => setRole("doctor")}
-                className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${role === "doctor"
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                className={`p-5 rounded-lg border-2 transition-all flex flex-col items-center gap-3 ${role === "doctor"
+                  ? "border-blue-500 bg-blue-50 text-blue-700"
+                  : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                   }`}
               >
-                <Stethoscope className="w-6 h-6" />
+                <Stethoscope className="w-7 h-7" />
                 <span className="text-sm font-medium">Doctor</span>
               </button>
             </div>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

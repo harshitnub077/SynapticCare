@@ -32,7 +32,15 @@ const signup = async (req, res) => {
             },
         });
 
-        res.status(201).json({ message: "User created successfully", userId: user.id });
+        // Generate token for immediate login
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+        res.status(201).json({
+            message: "User created successfully",
+            token,
+            role: user.role,
+            user: { id: user.id, name: user.name, email: user.email, role: user.role }
+        });
     } catch (error) {
         console.error("Signup Error:", error); // Keep console.error for debugging
         res.status(500).json({ message: "Server error", error: error.message });
@@ -52,7 +60,12 @@ const login = async (req, res) => {
 
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-        res.json({ message: "Login successful", token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+        res.json({
+            message: "Login successful",
+            token,
+            role: user.role,
+            user: { id: user.id, name: user.name, email: user.email, role: user.role }
+        });
     } catch (error) {
         console.error("Login Error:", error);
         res.status(500).json({ message: "Server error", error: error.message });
