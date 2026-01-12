@@ -4,10 +4,7 @@ backend/prisma/dev.db
 docker-compose.yml
 Dockerfile
 package-lock.json
-package.json
-
-package-lock.json
-package.json
+# Removed package.json from here to allow root scripts
 postman_collection.json
 API_DOCS.md
 backend/uploads/

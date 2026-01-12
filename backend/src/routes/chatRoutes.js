@@ -5,7 +5,11 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 router.use(authMiddleware);
 
-router.get("/", chatController.getChatHistory);
+// Historical Pulse Endpoints
+router.get("/history", chatController.getChatHistory);
+router.get("/history/:id", chatController.getConversationMessages);
+
+// Transmission Control
 router.post("/", chatController.sendMessage);
 router.delete("/", chatController.clearChatHistory);
 

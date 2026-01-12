@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "../api/axiosConfig";
+import { Mail, Lock, User, UserCircle, Stethoscope } from "lucide-react";
 
 const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,171 +10,168 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
     email: "",
     password: "",
   });
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
+    setError("");
+    const endpoint = isLogin ? "/auth/login" : "/auth/register";
 
     try {
-      if (isLogin) {
-        const res = await api.post("/auth/login", {
-          email: formData.email,
-          password: formData.password,
-        });
-        if (res.data && res.data.token) {
-          localStorage.setItem("token", res.data.token);
-
-          let userRole = "patient";
-          if (res.data.user && res.data.user.role) {
-            userRole = res.data.user.role;
-          }
-          localStorage.setItem("userRole", userRole);
-          onLoginSuccess();
-        } else {
-          console.error("Login response missing token or user data:", res.data);
-          setMessage("Login failed: Invalid server response.");
-        }
-      } else {
-        const res = await api.post("/auth/signup", {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          role: role,
-        });
-        setMessage(res.data.message || "Signup successful. You can now sign in.");
-        setIsLogin(true);
-      }
+      const res = await api.post(endpoint, { ...formData, role });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userRole", res.data.role);
+      onLoginSuccess();
     } catch (err) {
-      if (err.response) setMessage(err.response.data.message);
-      else setMessage("Unable to reach the server. Please try again.");
+      setError(err.response?.data?.message || "Connection error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-md">
-        <div className="bg-white border border-slate-200 shadow-sm rounded-xl px-6 py-8">
-          <h1 className="text-xl font-semibold text-slate-900 mb-6 text-center">
-            SynapticCare – Account
+        {/* Logo/Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            SynapticCare
           </h1>
+          <p className="text-gray-600">
+            {isLogin ? "Welcome back" : "Create your account"}
+          </p>
+        </div>
 
-          <div className="flex mb-5 rounded-md bg-slate-100 p-1 text-sm">
-            <button
-              type="button"
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-1.5 rounded-md ${isLogin
-                ? "bg-white shadow-sm text-slate-900"
-                : "text-slate-600 hover:text-slate-900"
-                }`}
-            >
-              Sign in
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-1.5 rounded-md ${!isLogin
-                ? "bg-white shadow-sm text-slate-900"
-                : "text-slate-600 hover:text-slate-900"
-                }`}
-            >
-              Register
-            </button>
+        {/* Form Card */}
+        <div className="card fade-in">
+          {/* Role Selection */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              I am a:
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setRole("patient")}
+                className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${role === "patient"
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                  }`}
+              >
+                <UserCircle className="w-6 h-6" />
+                <span className="text-sm font-medium">Patient</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("doctor")}
+                className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${role === "doctor"
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                  }`}
+              >
+                <Stethoscope className="w-6 h-6" />
+                <span className="text-sm font-medium">Doctor</span>
+              </button>
+            </div>
           </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <>
-                <div>
-                  <label className="block text-sm text-slate-700 mb-1">I am a</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="role"
-                        value="patient"
-                        checked={role === "patient"}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="mr-2"
-                        disabled={loading}
-                      />
-                      <span className="text-sm text-slate-700">Patient</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="role"
-                        value="doctor"
-                        checked={role === "doctor"}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="mr-2"
-                        disabled={loading}
-                      />
-                      <span className="text-sm text-slate-700">Doctor</span>
-                    </label>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-700 mb-1">Name</label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="text"
-                    name="name"
-                    className="input-medical"
-                    onChange={handleChange}
                     required
-                    disabled={loading}
+                    placeholder="John Doe"
+                    className="input pl-10"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                   />
                 </div>
-              </>
+              </div>
             )}
 
             <div>
-              <label className="block text-sm text-slate-700 mb-1">Email</label>
-              <input
-                type="email"
-                name="email"
-                className="input-medical"
-                onChange={handleChange}
-                required
-                disabled={loading}
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="email"
+                  required
+                  placeholder="you@example.com"
+                  className="input pl-10"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm text-slate-700 mb-1">Password</label>
-              <input
-                type="password"
-                name="password"
-                className="input-medical"
-                onChange={handleChange}
-                required
-                disabled={loading}
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  className="input pl-10"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+              </div>
             </div>
+
+            {error && (
+              <div className="alert alert-error slide-in">
+                {error}
+              </div>
+            )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 px-4 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-md hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed"
+              className="w-full btn btn-primary py-3"
             >
-              {loading
-                ? "Please wait..."
-                : isLogin
-                  ? "Sign in"
-                  : "Create account"}
+              {loading ? (
+                <>
+                  <div className="spinner" />
+                  <span>Please wait...</span>
+                </>
+              ) : (
+                <span>{isLogin ? "Sign In" : "Sign Up"}</span>
+              )}
             </button>
           </form>
 
-          {message && (
-            <p className="mt-4 text-xs text-center text-slate-700">{message}</p>
-          )}
+          {/* Toggle Login/Signup */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+              <button
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-blue-600 font-medium hover:underline"
+              >
+                {isLogin ? "Sign Up" : "Sign In"}
+              </button>
+            </p>
+          </div>
         </div>
       </div>
     </div>

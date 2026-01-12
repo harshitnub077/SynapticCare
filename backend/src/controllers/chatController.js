@@ -3,110 +3,116 @@ const aiService = require("../services/aiService");
 
 const getChatHistory = async (req, res) => {
     try {
-        const messages = await prisma.chatMessage.findMany({
+        const conversations = await prisma.conversation.findMany({
             where: { userId: req.userId },
+            orderBy: { createdAt: "desc" },
+        });
+        res.json(conversations);
+    } catch (error) {
+        console.error("Get chat history error:", error);
+        res.status(500).json({ message: "Failed to fetch session history" });
+    }
+};
+
+const getConversationMessages = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const messages = await prisma.chatMessage.findMany({
+            where: {
+                conversationId: id,
+                userId: req.userId
+            },
             orderBy: { createdAt: "asc" },
         });
         res.json({ messages });
     } catch (error) {
-        console.error("Get chat history error:", error);
-        res.status(500).json({ message: "Failed to fetch chat history" });
+        console.error("Get conversation messages error:", error);
+        res.status(500).json({ message: "Failed to fetch transmission logs" });
     }
 };
 
 const sendMessage = async (req, res) => {
     try {
-        const { message } = req.body;
+        const { message, chatId } = req.body;
         const userId = req.userId;
 
         if (!message) {
-            return res.status(400).json({ message: "Message is required" });
-        }
-        if (!userId) {
-            console.error("[Chat] Request missing userId.");
-            return res.status(401).json({ message: "User not authenticated" });
+            return res.status(400).json({ message: "Transmission rejected: Signal empty." });
         }
 
-        console.log(`[Chat] Processing message for user ${userId}: "${message.substring(0, 20)}..."`);
+        let conversationId = chatId;
 
-        // 1. Safe Save User Message (Do not block if fails)
-        let userMessage = { role: "user", message, createdAt: new Date() };
-        try {
-            userMessage = await prisma.chatMessage.create({
-                data: { userId, role: "user", message },
+        // 1. Create conversation if not exists
+        if (!conversationId) {
+            const conversation = await prisma.conversation.create({
+                data: {
+                    userId,
+                    title: message.substring(0, 30) + (message.length > 30 ? "..." : ""),
+                }
             });
-        } catch (dbError) {
-            console.error("[Chat] Failed to save user message to DB (continuing anyway):", dbError.message);
+            conversationId = conversation.id;
         }
 
-        // 2. Fetch History (Safe)
-        let context = [];
-        try {
-            const history = await prisma.chatMessage.findMany({
-                where: { userId },
-                orderBy: { createdAt: "desc" },
-                take: 10,
-            });
-            context = history.reverse().map(m => ({ role: m.role, content: m.message }));
-        } catch (histError) {
-            console.warn("[Chat] Failed to fetch history (starting fresh context):", histError.message);
-        }
+        // 2. Save User Message
+        await prisma.chatMessage.create({
+            data: {
+                userId,
+                conversationId,
+                role: "user",
+                message
+            },
+        });
 
-        // 3. Get AI Response
-        console.log(`[Chat] Calling AI Service...`);
-        let aiResponseText;
-        try {
-            aiResponseText = await aiService.getChatResponse(message, context);
-            if (!aiResponseText || typeof aiResponseText !== 'string') {
-                throw new Error("AI Service returned empty or invalid response");
-            }
-        } catch (aiError) {
-            console.error("[Chat] AI Service Fatal Error:", aiError);
-            aiResponseText = "I am currently experiencing a connection issue. Please try again in a moment.";
-        }
+        // 3. Get Context for AI
+        const history = await prisma.chatMessage.findMany({
+            where: { conversationId },
+            orderBy: { createdAt: "desc" },
+            take: 10,
+        });
+        const context = history.reverse().map(m => ({ role: m.role, content: m.message }));
 
-        // 4. Safe Save AI Response (Do not block if fails)
-        let aiMessage = { role: "assistant", message: aiResponseText, createdAt: new Date() };
-        try {
-            aiMessage = await prisma.chatMessage.create({
-                data: { userId, role: "assistant", message: aiResponseText },
-            });
-        } catch (dbError) {
-            console.error("[Chat] Failed to save AI response to DB (continuing anyway):", dbError.message);
-        }
+        // 4. Get AI Response
+        let aiResponseText = await aiService.getChatResponse(message, context);
+        if (!aiResponseText) aiResponseText = "Quantum Link Interference: Failed to generate clinical insight.";
 
-        console.log(`[Chat] Success. Sending response.`);
+        // 5. Save AI Message
+        await prisma.chatMessage.create({
+            data: {
+                userId,
+                conversationId,
+                role: "assistant",
+                message: aiResponseText
+            },
+        });
 
-        // Always return 200 OK so frontend receives the message
         res.json({
-            userMessage,
-            aiMessage
+            chatId: conversationId,
+            response: aiResponseText
         });
 
-    } catch (criticalError) {
-        console.error("[Chat] CRITICAL UNHANDLED ERROR:", criticalError);
-        // Even in critical failure, try to return a valid JSON to prevent frontend generic error
-        res.status(200).json({
-            userMessage: { role: "user", message: req.body.message || "" },
-            aiMessage: { role: "assistant", message: "System Critical Error: " + criticalError.message }
-        });
+    } catch (error) {
+        console.error("[Chat] CRITICAL ERROR:", error);
+        res.status(500).json({ message: "System Link Failure: Transmission Terminated." });
     }
 };
 
 const clearChatHistory = async (req, res) => {
     try {
-        await prisma.chatMessage.deleteMany({
-            where: { userId: req.userId },
-        });
-        res.json({ message: "Chat history cleared successfully" });
+        // Delete all conversations (and messages via cascade if configured, or manually)
+        // Here we'll delete messages first then conversations for safety
+        await prisma.chatMessage.deleteMany({ where: { userId: req.userId } });
+        await prisma.conversation.deleteMany({ where: { userId: req.userId } });
+
+        res.json({ message: "Nexus data archives purged successfully." });
     } catch (error) {
         console.error("Clear chat history error:", error);
-        res.status(500).json({ message: "Failed to clear chat history" });
+        res.status(500).json({ message: "Purge sequence failed." });
     }
 };
 
 module.exports = {
     getChatHistory,
+    getConversationMessages,
     sendMessage,
     clearChatHistory,
 };

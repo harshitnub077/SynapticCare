@@ -8,7 +8,7 @@ const appointmentRoutes = require("./src/routes/appointmentRoutes");
 const chatRoutes = require("./src/routes/chatRoutes");
 const testRoutes = require("./src/routes/testRoutes");
 
-const PORT = process.env.PORT || 5057;
+const PORT = process.env.PORT || 5050;
 
 app.use("/api/auth", authRoutes);
 app.use("/api/reports", reportRoutes);

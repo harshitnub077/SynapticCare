@@ -10,6 +10,7 @@ import Chat from "./pages/Chat";
 import Doctors from "./pages/Doctors";
 import Appointments from "./pages/Appointments";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
 
 import DoctorDashboard from "./pages/DoctorDashboard";
 import TestUpload from "./pages/TestUpload";
@@ -26,9 +27,6 @@ function App() {
       setIsAuthenticated(Boolean(token));
 
       if (token) {
-        // Decode token to get role or fetch user profile
-        // For simplicity, we'll fetch the user profile or store role in localStorage on login
-        // Let's assume we store it in localStorage for now to keep it simple
         const storedRole = localStorage.getItem("userRole");
         setUserRole(storedRole);
       }
@@ -53,31 +51,34 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        {!isAuthenticated ? (
-          <>
-            <Route path="/login" element={<LoginSignupForm onLoginSuccess={handleLoginSuccess} />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </>
-        ) : (
-          <>
-            {userRole === "doctor" ? (
-              <Route path="/" element={<DoctorDashboard onLogout={handleLogout} />} />
-            ) : (
-              <Route path="/" element={<Home onLogout={handleLogout} />} />
-            )}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/upload" element={<UploadReport />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/reports/:id" element={<ReportDetail />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/doctors" element={<Doctors />} />
-            <Route path="/appointments" element={<Appointments />} />
-            <Route path="/test-upload" element={<TestUpload />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </>
-        )}
-      </Routes>
+      {isAuthenticated && <Navbar onLogout={handleLogout} />}
+      <div className={isAuthenticated ? "pt-24" : ""}>
+        <Routes>
+          {!isAuthenticated ? (
+            <>
+              <Route path="/login" element={<LoginSignupForm onLoginSuccess={handleLoginSuccess} />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </>
+          ) : (
+            <>
+              {userRole === "doctor" ? (
+                <Route path="/" element={<DoctorDashboard onLogout={handleLogout} />} />
+              ) : (
+                <Route path="/" element={<Home onLogout={handleLogout} />} />
+              )}
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/upload" element={<UploadReport />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/reports/:id" element={<ReportDetail />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/doctors" element={<Doctors />} />
+              <Route path="/appointments" element={<Appointments />} />
+              <Route path="/test-upload" element={<TestUpload />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </>
+          )}
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }

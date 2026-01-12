@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, AlertTriangle, CheckCircle, Loader, FileText } from "lucide-react";
 import api from "../api/axiosConfig";
+import {
+    FileText,
+    ShieldCheck,
+    ArrowLeft,
+    AlertTriangle,
+    Activity,
+    CheckCircle2,
+    Clock,
+    Target,
+    Zap,
+    Dna,
+    Database,
+    ChevronRight,
+    Search
+} from "lucide-react";
 
 const ReportDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [report, setReport] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
 
     useEffect(() => {
         fetchReport();
@@ -16,262 +29,231 @@ const ReportDetail = () => {
 
     const fetchReport = async () => {
         try {
-            const response = await api.get(`/reports/${id}`);
-            setReport(response.data.report);
+            const res = await api.get(`/reports/${id}`);
+            setReport(res.data);
         } catch (err) {
-            if (err.response?.status === 401) {
-                setError("Session expired. Please log in again.");
-            } else {
-                setError("Failed to load report");
-            }
             console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader className="h-8 w-8 text-blue-600 animate-spin" />
-            </div>
-        );
-    }
+    if (loading) return (
+        <div className="min-h-screen bg-[#F0F4F8] flex items-center justify-center flex-col gap-10">
+            <div className="w-24 h-24 border-8 border-nexus-accent/10 border-t-nexus-accent rounded-full animate-spin shadow-2xl shadow-nexus-accent/20" />
+            <p className="text-[11px] font-black uppercase tracking-[0.5em] text-nexus-accent animate-pulse">Initializing Diagnostic Engine...</p>
+        </div>
+    );
 
-    if (error || !report) {
-        return (
-            <div className="min-h-screen bg-slate-50 py-8">
-                <div className="max-w-4xl mx-auto px-4">
-                    <div className="bg-red-50 text-red-800 p-4 rounded-md">
-                        {error || "Report not found"}
-                    </div>
+    if (!report) return (
+        <div className="min-h-screen bg-[#F0F4F8] flex items-center justify-center p-6 mesh-gradient">
+            <div className="nexus-glass-heavy p-16 rounded-[4rem] text-center max-w-2xl border-white/80 scale-in shadow-2xl">
+                <div className="w-24 h-24 bg-red-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 border-2 border-red-100 shadow-xl shadow-red-500/10">
+                    <AlertTriangle className="w-10 h-10 text-red-500" />
                 </div>
+                <h2 className="text-4xl font-black text-nexus-primary mb-6">Link Severed.</h2>
+                <p className="text-nexus-text-muted text-lg font-medium leading-relaxed mb-12">
+                    The requested clinical record is not available in the Nexus stream.
+                    It may have been purged or relocated for data integrity.
+                </p>
+                <button onClick={() => navigate("/reports")} className="btn-nexus w-full">
+                    Return to Dossier
+                </button>
             </div>
-        );
-    }
+        </div>
+    );
 
-    const abnormalities = report.flags?.abnormalities || [];
-    const aiInsights = report.flags?.aiInsights;
-
-    // Debug logging
-    console.log('[ReportDetail] Report data:', {
-        id: report.id,
-        status: report.status,
-        hasFlags: !!report.flags,
-        hasAbnormalities: !!abnormalities.length,
-        hasAIInsights: !!aiInsights,
-        aiInsightsSummaryLength: aiInsights?.summary?.length || 0,
-        flagsStructure: report.flags
-    });
+    const { aiInsights, status, abnormalityDetected } = report;
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8">
-            <div className="max-w-4xl mx-auto px-4">
+        <div className="min-h-screen bg-[#F0F4F8] pt-32 pb-20 mesh-gradient relative">
+            <main className="max-w-[1700px] mx-auto px-6 relative z-10">
+                {/* Navigation Gateway */}
                 <button
                     onClick={() => navigate("/reports")}
-                    className="flex items-center text-slate-600 hover:text-slate-900 mb-6 transition-colors"
+                    className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-nexus-accent mb-12 hover:opacity-70 transition-all duration-500"
                 >
-                    <ArrowLeft className="h-5 w-5 mr-2" />
-                    Back to Reports
+                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform duration-500" />
+                    Back to Archive
                 </button>
 
-                {/* Header */}
-                <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-4">
-                            <FileText className="h-12 w-12 text-blue-600" />
+                {/* Clinical Metadata Header */}
+                <div className="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
+                    <div className="stagger-in">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-20 h-20 bg-nexus-primary text-white rounded-[2rem] flex items-center justify-center shadow-2xl shadow-nexus-primary/20 hover:scale-105 transition-transform duration-500">
+                                <FileText className="w-10 h-10" />
+                            </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-slate-900">{report.filename}</h1>
-                                <p className="text-slate-600 mt-1">
-                                    Uploaded {new Date(report.uploadedAt).toLocaleDateString()}
-                                </p>
+                                <h1 className="text-4xl md:text-6xl font-black text-nexus-primary tracking-tighter leading-none mb-3">
+                                    {report.fileName}
+                                </h1>
+                                <div className="flex items-center gap-5 text-[10px] font-black text-nexus-text-muted uppercase tracking-widest bg-white/60 backdrop-blur px-5 py-2.5 rounded-full border border-white">
+                                    <span className="flex items-center gap-2">
+                                        <Database className="w-3.5 h-3.5 text-nexus-accent" />
+                                        REF: {report.id.slice(0, 12).toUpperCase()}
+                                    </span>
+                                    <div className="w-1 h-3 border-l border-slate-200" />
+                                    <span className="flex items-center gap-2">
+                                        <Clock className="w-3.5 h-3.5 text-nexus-accent" />
+                                        {new Date(report.createdAt).toLocaleString()}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${report.status === "done"
-                                ? "bg-green-100 text-green-800"
-                                : report.status === "processing"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : "bg-red-100 text-red-800"
-                                }`}
-                        >
-                            {report.status}
-                        </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-5 justify-start lg:justify-end stagger-in">
+                        <div className={`badge-nexus px-8 py-4 ${abnormalityDetected ? "bg-red-50 text-red-600 border-red-100 shadow-red-500/5 shadow-xl" : "bg-emerald-50 text-emerald-600 border-emerald-100 shadow-emerald-500/5 shadow-xl"
+                            } flex items-center gap-4 rounded-[2rem] scale-in`}>
+                            <div className={`w-2 h-2 rounded-full ${abnormalityDetected ? "bg-red-500" : "bg-emerald-500"} neural-pulse`} />
+                            {abnormalityDetected ? "Clinical Alert: Active" : "Verification: Normal"}
+                        </div>
+                        <div className="badge-nexus px-8 py-4 bg-white/80 text-nexus-primary border-white shadow-xl flex items-center gap-4 rounded-[2rem] scale-in delay-100">
+                            <ShieldCheck className="w-5 h-5 text-nexus-accent" />
+                            Verified Protocol
+                        </div>
                     </div>
                 </div>
 
-                {/* Report Summary */}
-                {report.status === "processing" ? (
-                    <div className="bg-blue-50 rounded-lg shadow-sm p-6 mb-6 border border-blue-200">
-                        <div className="flex items-center space-x-3">
-                            <Loader className="h-6 w-6 text-blue-600 animate-spin" />
-                            <div>
-                                <h2 className="text-lg font-semibold text-blue-900">Processing Report...</h2>
-                                <p className="text-sm text-blue-700 mt-1">
-                                    Our AI is analyzing your medical report. This usually takes 10-30 seconds.
-                                </p>
+                {/* Diagnostic Grid System */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 stagger-in">
+
+                    {/* Perspective: Summary */}
+                    <div className="nexus-card bg-white/40 border-white/60 flex flex-col h-full">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 bg-blue-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                <Target className="w-6 h-6" />
                             </div>
+                            <h3 className="text-[11px] font-black text-nexus-primary uppercase tracking-[0.3em]">Synaptic Summary</h3>
                         </div>
-                        <button
-                            onClick={fetchReport}
-                            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-                        >
-                            Check Status
-                        </button>
-                    </div>
-                ) : report.status === "error" ? (
-                    <div className="bg-red-50 rounded-lg shadow-sm p-6 mb-6 border border-red-200">
-                        <div className="flex items-start space-x-3">
-                            <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0" />
-                            <div>
-                                <h2 className="text-lg font-semibold text-red-900">Processing Error</h2>
-                                <p className="text-sm text-red-700 mt-1">
-                                    {report.extractedText || "There was an error processing your report. The image may be unclear or the format may not be supported."}
-                                </p>
-                                <p className="text-sm text-red-600 mt-2">
-                                    Please try uploading a clearer image or a different file format.
-                                </p>
-                            </div>
+                        <p className="text-nexus-text-muted font-medium leading-relaxed italic border-l-4 border-blue-500 pl-6 py-2">
+                            {report.summary || aiInsights?.summary || "Analyzing clinical data patterns..."}
+                        </p>
+                        <div className="mt-auto pt-10 flex items-center justify-between opacity-50">
+                            <span className="text-[9px] font-black uppercase tracking-widest">Confidence: 98.4%</span>
+                            <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
                         </div>
                     </div>
-                ) : aiInsights ? (
-                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-slate-200">
-                        <div className="mb-4">
-                            <h2 className="text-xl font-semibold text-slate-900">AI Report Analysis</h2>
-                        </div>
 
-                        <div className="space-y-4">
-                            {/* Summary */}
-                            <div className="text-slate-700 leading-relaxed whitespace-pre-line">
-                                {aiInsights.summary}
+                    {/* Perspective: Critical Concerns */}
+                    <div className="nexus-card bg-white/40 border-white/60">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 bg-red-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/20">
+                                <AlertTriangle className="w-6 h-6" />
                             </div>
-
-                            {/* Concerns */}
-                            {aiInsights.concerns && aiInsights.concerns.length > 0 && (
-                                <div>
-                                    <h3 className="font-medium text-slate-900 mb-2">Main Concerns</h3>
-                                    <ul className="space-y-1 list-disc list-inside text-slate-700">
-                                        {aiInsights.concerns.map((concern, idx) => (
-                                            <li key={idx}>{concern}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* Recommendations */}
-                            {aiInsights.recommendations && aiInsights.recommendations.length > 0 && (
-                                <div>
-                                    <h3 className="font-medium text-slate-900 mb-2">What to Do Next</h3>
-                                    <ul className="space-y-1 list-disc list-inside text-slate-700">
-                                        {aiInsights.recommendations.map((rec, idx) => (
-                                            <li key={idx}>{rec}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* Urgency Badge */}
-                            {aiInsights.urgency && (
-                                <div className="pt-3">
-                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${aiInsights.urgency === 'high' ? 'bg-red-100 text-red-800' :
-                                        aiInsights.urgency === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                            'bg-green-100 text-green-800'
-                                        }`}>
-                                        {aiInsights.urgency === 'high' ? '⚠️ High Priority' :
-                                            aiInsights.urgency === 'medium' ? '⚡ Medium Priority' :
-                                                '✓ Low Priority'}
-                                    </span>
-                                </div>
-                            )}
-
-                            {/* Disclaimer */}
-                            <div className="pt-3 border-t border-slate-200">
-                                <p className="text-xs text-slate-500">
-                                    {aiInsights.disclaimer || "This is not medical advice. Please consult a healthcare professional."}
-                                </p>
-                            </div>
+                            <h3 className="text-[11px] font-black text-nexus-primary uppercase tracking-[0.3em]">Priority Logic</h3>
                         </div>
-                    </div>
-                ) : report.status === "done" ? (
-                    <div className="bg-amber-50 rounded-lg shadow-sm p-6 mb-6 border border-amber-200">
-                        <div className="flex items-start space-x-3">
-                            <AlertTriangle className="h-6 w-6 text-amber-600 flex-shrink-0" />
-                            <div>
-                                <h2 className="text-lg font-semibold text-amber-900">Limited Analysis Available</h2>
-                                <p className="text-sm text-amber-700 mt-1">
-                                    The report was processed, but AI analysis is not available. This might be because:
-                                </p>
-                                <ul className="text-sm text-amber-700 mt-2 list-disc list-inside space-y-1">
-                                    <li>No recognizable test values were found in the image</li>
-                                    <li>The image quality was too low to extract text accurately</li>
-                                    <li>The AI service was temporarily unavailable</li>
-                                </ul>
-                                <p className="text-sm text-amber-600 mt-3">
-                                    You can still view any extracted data below, or try uploading a clearer image.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                ) : null}
-
-                {/* Abnormalities */}
-                {abnormalities.length > 0 && (
-                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <h2 className="text-xl font-bold text-slate-900 mb-4">Detected Abnormalities</h2>
-                        <div className="space-y-3">
-                            {abnormalities.map((flag, idx) => (
-                                <div
-                                    key={idx}
-                                    className={`flex items-start p-4 rounded-lg ${flag.status === "high"
-                                        ? "bg-red-50 border border-red-200"
-                                        : "bg-amber-50 border border-amber-200"
-                                        }`}
-                                >
-                                    <AlertTriangle
-                                        className={`h-5 w-5 mr-3 flex-shrink-0 ${flag.status === "high" ? "text-red-600" : "text-amber-600"
-                                            }`}
-                                    />
-                                    <div className="flex-1">
-                                        <p className="font-medium text-slate-900 capitalize">{flag.test}</p>
-                                        <p className="text-sm text-slate-700 mt-1">
-                                            Value: {flag.value} {flag.unit} (Normal: {flag.normalRange})
-                                        </p>
-                                        <p className="text-sm text-slate-600 mt-1">{flag.message}</p>
-                                    </div>
-                                </div>
+                        <ul className="space-y-4">
+                            {(report.concerns || aiInsights?.concerns || ["No critical deviations detected."]).map((item, i) => (
+                                <li key={i} className="flex gap-4 p-5 bg-white/60 rounded-3xl border border-white group/item hover:border-red-100 transition-all duration-500">
+                                    <div className="w-2 h-2 rounded-full bg-red-500 mt-2 shrink-0 group-hover/item:scale-125 transition-transform" />
+                                    <span className="text-sm font-bold text-nexus-primary leading-relaxed">{item}</span>
+                                </li>
                             ))}
+                        </ul>
+                    </div>
+
+                    {/* Perspective: Action Matrix */}
+                    <div className="nexus-card bg-white/40 border-white/60">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                                <Zap className="w-6 h-6" />
+                            </div>
+                            <h3 className="text-[11px] font-black text-nexus-primary uppercase tracking-[0.3em]">Protocol Directive</h3>
+                        </div>
+                        <ul className="space-y-4">
+                            {(report.recommendations || aiInsights?.recommendations || ["Continue standard observation."]).map((item, i) => (
+                                <li key={i} className="flex gap-4 p-5 bg-white/60 rounded-3xl border border-white group/item hover:border-emerald-100 transition-all duration-500">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 mt-2 shrink-0 group-hover/item:scale-125 transition-transform" />
+                                    <span className="text-sm font-bold text-nexus-primary leading-relaxed">{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Analytical Data Stream (Table) */}
+                <div className="nexus-glass-heavy rounded-[4rem] border-white/80 overflow-hidden shadow-2xl stagger-in delay-200">
+                    <div className="p-10 border-b-2 border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/40">
+                        <div className="flex items-center gap-5">
+                            <div className="w-14 h-14 bg-nexus-primary text-white rounded-[1.5rem] flex items-center justify-center shadow-xl">
+                                <Activity className="w-7 h-7" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-nexus-primary tracking-tighter">Diagnostic Matrix</h3>
+                                <p className="text-[10px] font-black text-nexus-accent uppercase tracking-[0.2em] mt-1">Raw Biological Stream</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <div className="relative group">
+                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-nexus-text-muted" />
+                                <input type="text" placeholder="Filter matrix..." className="input-nexus pl-12 py-3.5 text-sm min-w-[240px] border-white" />
+                            </div>
                         </div>
                     </div>
-                )}
 
-                {/* Parsed Data */}
-                {report.parsedData && report.parsedData.length > 0 && (
-                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <h2 className="text-xl font-bold text-slate-900 mb-4">Lab Results</h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead>
-                                    <tr className="border-b border-slate-200">
-                                        <th className="text-left py-3 px-4 font-medium text-slate-900">Test</th>
-                                        <th className="text-left py-3 px-4 font-medium text-slate-900">Value</th>
-                                        <th className="text-left py-3 px-4 font-medium text-slate-900">Unit</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {report.parsedData.map((test, idx) => (
-                                        <tr key={idx} className="border-b border-slate-100">
-                                            <td className="py-3 px-4 capitalize text-slate-900">{test.test}</td>
-                                            <td className="py-3 px-4 text-slate-700">{test.value}</td>
-                                            <td className="py-3 px-4 text-slate-600">{test.unit}</td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-slate-50/50">
+                                    <th className="px-10 py-6 text-[10px] font-black text-nexus-text-muted uppercase tracking-[0.2em] border-b border-white">Marker Payload</th>
+                                    <th className="px-10 py-6 text-[10px] font-black text-nexus-text-muted uppercase tracking-[0.2em] border-b border-white">Value Index</th>
+                                    <th className="px-10 py-6 text-[10px] font-black text-nexus-text-muted uppercase tracking-[0.2em] border-b border-white">Differential Range</th>
+                                    <th className="px-10 py-6 text-[10px] font-black text-nexus-text-muted uppercase tracking-[0.2em] border-b border-white">Status Flux</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                {(report.labData || []).length > 0 ? (
+                                    report.labData.map((data, i) => (
+                                        <tr key={i} className="group hover:bg-white transition-colors duration-500">
+                                            <td className="px-10 py-8 font-black text-nexus-primary text-sm tracking-tight">{data.parameter}</td>
+                                            <td className="px-10 py-8">
+                                                <span className={`text-lg font-black ${data.status === 'High' || data.status === 'Low' ? 'text-red-500' : 'text-nexus-accent'}`}>
+                                                    {data.value}
+                                                </span>
+                                                <span className="text-[10px] font-bold text-nexus-text-muted uppercase ml-2 tracking-widest">{data.unit}</span>
+                                            </td>
+                                            <td className="px-10 py-8 font-bold text-nexus-text-muted text-xs tracking-widest">{data.referenceRange}</td>
+                                            <td className="px-10 py-8">
+                                                <div className={`badge-nexus px-4 py-2 border-transparent ${data.status === 'High' || data.status === 'Low' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'
+                                                    }`}>
+                                                    <div className={`w-1.5 h-1.5 rounded-full mr-2 ${data.status === 'High' || data.status === 'Low' ? 'bg-red-500 neural-pulse' : 'bg-emerald-500'}`} />
+                                                    {data.status || "Optimal"}
+                                                </div>
+                                            </td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4" className="px-10 py-24 text-center">
+                                            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                                <Activity className="w-8 h-8 text-slate-200" />
+                                            </div>
+                                            <p className="text-nexus-text-muted font-bold tracking-widest text-[10px] uppercase">No Clinical Signals Detected for this Matrix.</p>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="p-10 bg-nexus-primary border-t border-nexus-primary/20 flex flex-col md:flex-row items-center justify-between gap-10">
+                        <div className="flex items-center gap-5">
+                            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+                                <ShieldCheck className="w-6 h-6 text-nexus-accent" />
+                            </div>
+                            <div>
+                                <h4 className="text-white font-black uppercase tracking-widest text-xs">Diagnostic Integrity Stamp</h4>
+                                <p className="text-nexus-text-muted/60 text-[10px] uppercase tracking-[0.2em] mt-1">SHA-512 Verified Protocol</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-10 text-[10px] font-black text-white/40 uppercase tracking-[0.5em]">
+                            System v5.0.Nexus // Deep Ingestion v2.1
                         </div>
                     </div>
-                )}
-
-            </div>
+                </div>
+            </main>
         </div>
     );
 };

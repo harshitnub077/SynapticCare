@@ -2,178 +2,175 @@ import React, { useState, useEffect } from "react";
 import api from "../api/axiosConfig";
 import DoctorCard from "../components/DoctorCard";
 import BookingModal from "../components/BookingModal";
+import { Search, Filter, Activity, ShieldCheck, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 
 const Doctors = () => {
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
-    const [filters, setFilters] = useState({
-        specialization: "",
-        sortBy: "rating_desc",
-    });
+    const [specialization, setSpecialization] = useState("");
     const [selectedDoctor, setSelectedDoctor] = useState(null);
-    const [showSuccess, setShowSuccess] = useState(false);
-
-    const [page, setPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const limit = 9; // 9 doctors per page
 
-    // Debounce search
-    const [debouncedSearch, setDebouncedSearch] = useState(search);
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(search);
-            setPage(1); // Reset to page 1 on search
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [search]);
-
-    useEffect(() => {
-        setPage(1); // Reset to page 1 on filter change
-    }, [filters]);
+    const specializations = [
+        "Cardiology", "Neurology", "General Medicine",
+        "Dermatology", "Pediatrics", "Orthopedics", "Psychiatry"
+    ];
 
     useEffect(() => {
         fetchDoctors();
-    }, [debouncedSearch, filters, page]);
+    }, [search, specialization, currentPage]);
 
     const fetchDoctors = async () => {
-        setLoading(true);
         try {
-            const params = new URLSearchParams();
-            if (debouncedSearch) params.append("search", debouncedSearch);
-            if (filters.specialization) params.append("specialization", filters.specialization);
-            if (filters.sortBy) params.append("sortBy", filters.sortBy);
-            params.append("page", page);
-            params.append("limit", limit);
-
-            const response = await api.get(`/doctors?${params.toString()}`);
-            setDoctors(response.data.doctors);
-            setTotalPages(response.data.pagination.pages);
-        } catch (error) {
-            console.error("Failed to fetch doctors:", error);
+            setLoading(true);
+            const res = await api.get("/doctors", {
+                params: {
+                    name: search,
+                    clinic: search,
+                    specialization: specialization,
+                    page: currentPage,
+                    limit: 9
+                }
+            });
+            setDoctors(res.data.doctors || []);
+            setTotalPages(res.data.totalPages || 1);
+        } catch (err) {
+            console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleBookingSuccess = () => {
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
-    };
-
-    const specializations = [
-        "Cardiologist",
-        "Dermatologist",
-        "Neurologist",
-        "Pediatrician",
-        "General Physician",
-        "Orthopedic",
-    ];
-
     return (
-        <div className="min-h-screen bg-gray-50 pb-12">
-            {/* Header */}
-            <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <h1 className="text-2xl font-bold text-gray-900">Find a Doctor</h1>
+        <div className="min-h-screen bg-[#F0F4F8] pt-32 pb-20 mesh-gradient relative">
+            <main className="max-w-[1600px] mx-auto px-6 relative z-10">
+                {/* Section Header */}
+                <div className="mb-16 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+                    <div className="stagger-in">
+                        <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white/60 backdrop-blur rounded-full mb-6 border border-white">
+                            <Activity className="w-4 h-4 text-nexus-accent neural-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-nexus-accent">Global Specialist Network</span>
+                        </div>
+                        <h1 className="text-5xl md:text-7xl font-black text-nexus-primary tracking-tighter leading-none mb-6">
+                            Elite <span className="text-gradient">Registry.</span>
+                        </h1>
+                        <p className="text-nexus-text-muted max-w-xl font-medium text-lg leading-relaxed">
+                            Access the world's most advanced medical precision. Connect with board-verified
+                            specialists in our next-generation clinical cloud.
+                        </p>
+                    </div>
 
-                        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                            {/* Search */}
+                    {/* High-fidelity Filter System */}
+                    <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto nexus-glass-heavy p-6 rounded-[2.5rem]">
+                        <div className="relative flex-1 sm:min-w-[300px]">
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-nexus-text-muted" />
                             <input
                                 type="text"
-                                placeholder="Search doctors..."
+                                placeholder="Search Name or Clinic..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="flex-1 min-w-[300px] px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                className="input-nexus pl-16 py-4"
                             />
-
-                            {/* Filters */}
-                            <div className="flex gap-2">
-                                <select
-                                    value={filters.specialization}
-                                    onChange={(e) => setFilters({ ...filters, specialization: e.target.value })}
-                                    className="px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:border-blue-500"
-                                >
-                                    <option value="">All Specialists</option>
-                                    {specializations.map((spec) => (
-                                        <option key={spec} value={spec}>{spec}</option>
-                                    ))}
-                                </select>
-
-                                <select
-                                    value={filters.sortBy}
-                                    onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
-                                    className="px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:border-blue-500"
-                                >
-                                    <option value="rating_desc">Highest Rated</option>
-                                    <option value="experience_desc">Most Experienced</option>
-                                    <option value="fees_asc">Lowest Fees</option>
-                                    <option value="fees_desc">Highest Fees</option>
-                                </select>
-                            </div>
+                        </div>
+                        <div className="relative">
+                            <Filter className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-nexus-text-muted" />
+                            <select
+                                value={specialization}
+                                onChange={(e) => setSpecialization(e.target.value)}
+                                className="input-nexus pl-16 py-4 pr-12 appearance-none cursor-pointer"
+                            >
+                                <option value="">Specialization</option>
+                                {specializations.map((spec) => (
+                                    <option key={spec} value={spec}>{spec}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Success Toast */}
-            {showSuccess && (
-                <div className="fixed top-20 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded shadow-lg">
-                    Appointment booked successfully!
-                </div>
-            )}
-
-            {/* Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Database Stream */}
                 {loading ? (
-                    <div className="text-center py-12 text-gray-500">Loading...</div>
-                ) : doctors.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                        No doctors found. Try adjusting your filters.
+                    <div className="min-h-[500px] flex items-center justify-center flex-col gap-6">
+                        <div className="w-16 h-16 border-4 border-nexus-accent/20 border-t-nexus-accent rounded-full animate-spin" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-nexus-accent animate-pulse">Syncing Database...</p>
                     </div>
-                ) : (
+                ) : doctors.length > 0 ? (
                     <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-in">
                             {doctors.map((doctor) => (
                                 <DoctorCard
                                     key={doctor.id}
                                     doctor={doctor}
-                                    onBook={setSelectedDoctor}
+                                    onBook={(doc) => setSelectedDoctor(doc)}
                                 />
                             ))}
                         </div>
 
-                        {/* Pagination Controls */}
-                        <div className="flex justify-center items-center space-x-4">
-                            <button
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
-                                disabled={page === 1}
-                                className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Previous
-                            </button>
-                            <span className="text-gray-600">
-                                Page {page} of {totalPages}
-                            </span>
-                            <button
-                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                disabled={page === totalPages}
-                                className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Next
-                            </button>
-                        </div>
+                        {/* Pagination Stream */}
+                        {totalPages > 1 && (
+                            <div className="mt-20 flex items-center justify-center gap-4">
+                                <button
+                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                    className="p-5 nexus-glass rounded-2xl hover:bg-nexus-primary hover:text-white transition-all duration-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-nexus-text"
+                                >
+                                    <ChevronLeft className="w-5 h-5" />
+                                </button>
+                                <div className="flex items-center gap-2 p-3 nexus-glass rounded-2xl">
+                                    {[...Array(totalPages)].map((_, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => setCurrentPage(i + 1)}
+                                            className={`w-10 h-10 rounded-xl font-black text-xs transition-all duration-500 ${currentPage === i + 1
+                                                ? "bg-nexus-primary text-white shadow-xl"
+                                                : "text-nexus-text-muted hover:bg-white"
+                                                }`}
+                                        >
+                                            {i + 1}
+                                        </button>
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="p-5 nexus-glass rounded-2xl hover:bg-nexus-primary hover:text-white transition-all duration-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-nexus-text"
+                                >
+                                    <ChevronRight className="w-5 h-5" />
+                                </button>
+                            </div>
+                        )}
                     </>
+                ) : (
+                    <div className="min-h-[500px] flex flex-col items-center justify-center text-center stagger-in">
+                        <div className="w-24 h-24 bg-red-50 rounded-[2.5rem] flex items-center justify-center mb-8 border border-red-100 shadow-2xl shadow-red-500/10">
+                            <LayoutGrid className="w-10 h-10 text-red-500" />
+                        </div>
+                        <h3 className="text-3xl font-bold text-nexus-primary mb-4">Registry Null.</h3>
+                        <p className="text-nexus-text-muted max-w-md font-medium">
+                            No active biological signals detected for this query.
+                            Please refine your search parameters.
+                        </p>
+                        <button
+                            onClick={() => { setSearch(""); setSpecialization(""); }}
+                            className="mt-10 btn-nexus-outline"
+                        >
+                            Reset Protocol
+                        </button>
+                    </div>
                 )}
-            </div>
+            </main>
 
-            {/* Booking Modal */}
+            {/* Specialist Onboarding Modal */}
             {selectedDoctor && (
                 <BookingModal
                     doctor={selectedDoctor}
                     onClose={() => setSelectedDoctor(null)}
-                    onSuccess={handleBookingSuccess}
+                    onSuccess={() => {
+                        setSelectedDoctor(null);
+                        // Refresh if needed
+                    }}
                 />
             )}
         </div>
