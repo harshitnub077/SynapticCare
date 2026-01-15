@@ -9,6 +9,7 @@ const doctorSchema = z.object({
     fees: z.number().min(0),
     location: z.string().min(3),
     image: z.string().optional(),
+    rating: z.number().optional(),
     about: z.string().optional(),
     available: z.boolean().optional(),
 });
