@@ -269,3 +269,5 @@ Proprietary & Confidential.
 <!-- Polished badge alignment -->
 
 <!-- Synchronized repository details -->
+
+<!-- Updated platform overview and architecture notes -->
