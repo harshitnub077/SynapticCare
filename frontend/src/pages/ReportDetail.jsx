@@ -170,6 +170,18 @@ const ReportDetail = () => {
                                 </div>
                             )}
 
+                            {/* Precautions */}
+                            {aiInsights.precautions && aiInsights.precautions.length > 0 && (
+                                <div>
+                                    <h3 className="font-medium text-slate-900 mb-2">Precautions & OTC Guidance</h3>
+                                    <ul className="space-y-1 list-disc list-inside text-slate-700">
+                                        {aiInsights.precautions.map((prec, idx) => (
+                                            <li key={idx}>{prec}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
                             {/* Urgency Badge */}
                             {aiInsights.urgency && (
                                 <div className="pt-3">

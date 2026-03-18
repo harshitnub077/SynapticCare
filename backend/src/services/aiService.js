@@ -57,6 +57,8 @@ STYLE AND STRUCTURE:
    - Respond fluently and professionally in the **same language** that was used by the user.
    - All response headers (e.g., Assessment, Considerations, Red Flags) and safety disclaimers must be translated accurately into that same language.
 
+8. **Avoid Canned Responses**: Vary your phrasing, introductions, and transition layout structures. Do not sound like a uniform template or repeat boilerplate phrases across multiple questions on identical topics.
+
 SAFETY RULES (MANDATORY):
 - You are **not the patient's doctor** and you **must not prescribe** specific drugs, doses, or treatment plans. You may list or summarize medications EXPLICITLY documented as ALREADY PRESCRIBED in uploaded medical records or reports description upon request, but do not prescribe new or change existing dosages.
 - You may mention classes of medicines in general terms (e.g., "pain relievers such as paracetamol") but:
@@ -79,7 +81,7 @@ class AIService {
      * Analyze report using Gemini
      */
     async analyzeReport(parsedData, flags, rawText = null) {
-        if (!model) {
+        if (!model && !groq) {
             return {
                 summary: "AI analysis is currently unavailable. Gemini API key not configured.",
                 concerns: [],
@@ -135,13 +137,11 @@ ${dataContext}${abnormalityContext}
 
 TASK: Generate a comprehensive patient summary by analyzing ALL the information in the scanned report. Your analysis must be thorough and cover:
 
-1. **Summary** (1-2 short paragraphs, simple language): 
-   - Write in VERY SIMPLE, EASY-TO-UNDERSTAND language that anyone can read
-   - Keep it SHORT and CONCISE - maximum 4-5 sentences total
-   - Use everyday words, avoid medical jargon
-   - Briefly explain what the report shows in plain terms
-   - Mention the main findings only
-   - If something is wrong, say it simply (e.g., "Your blood sugar is high" not "Hyperglycemia detected")
+1. **Summary** (1-2 paragraphs, easy language): 
+   - Write in VERY SIMPLE, EASY-TO-UNDERSTAND language that anyone can read.
+   - Provide a DETAILED, COMPREHENSIVE explanation of what the report shows, ensuring it translates findings into everyday terms (e.g., "This means your body might be fighting an infection").
+   - Use everyday words, avoid medical jargon.
+   - Do not artificially shorten explanation; contextualize abnormal values simple descriptions.
 
 2. **Concerns** (array of 2-4 items, simple language):
    - List only the main problems found
@@ -152,32 +152,40 @@ TASK: Generate a comprehensive patient summary by analyzing ALL the information 
 
 3. **Recommendations** (array of 2-3 items, simple language):
    - Give simple, clear advice (e.g., "See your doctor soon" not "Consult a healthcare professional")
-   - Keep each recommendation to 1 sentence
-   - Use plain language
    - Focus on what the patient should do next
 
-4. **Urgency** (one of: "low", "medium", "high"):
+4. **Precautions** (array of 2-4 items, simple language):
+   - List safe precautions the patient should take (e.g., rest, hydration, avoidance of certain triggers).
+   - List safe over-the-counter (OTC) supportive aids or typical supplements suitable supporting general symptoms (e.g., "Consider a simple pain reliever like paracetamol for pain if okay for you"), with safety disclaimers intact. Use clear arrays.
+
+5. **Urgency** (one of: "low", "medium", "high"):
    - "low": Routine follow-up, no immediate action needed
    - "medium": Should consult doctor soon, but not emergency
    - "high": Requires prompt medical attention or immediate care
 
-5. **Disclaimer**: Always include: "This is not medical advice. Please consult a healthcare professional."
+6. **Disclaimer**: Always include: "This is not medical advice. Please consult a healthcare professional."
 
-OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
+OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text). You MUST ALWAYS include these 6 keys in the JSON response: summary, concerns, recommendations, precautions, urgency, disclaimer.
 {
   "summary": "Detailed 2-3 paragraph summary here...",
-  "concerns": ["Concern 1", "Concern 2", "Concern 3"],
-  "recommendations": ["Recommendation 1", "Recommendation 2", "Recommendation 3"],
+  "concerns": ["Concern 1", "Concern 2"],
+  "recommendations": ["Recommendation 1"],
+  "precautions": ["Precaution 1 / OTC guidance", "Precaution 2"],
   "urgency": "low|medium|high",
   "disclaimer": "This is not medical advice. Please consult a healthcare professional."
-}`;
+}
+`;
 
             let text = "";
             if (groq) {
                 const groqResponse = await groq.chat.completions.create({
-                    messages: [{ role: "user", content: userPrompt }],
+                    messages: [
+                        { role: "system", content: "You are an expert medical AI assistant. You MUST return a JSON object with exactly these 6 keys: summary, concerns, recommendations, precautions, urgency, disclaimer." },
+                        { role: "user", content: userPrompt }
+                    ],
                     model: "llama-3.3-70b-versatile",
-                    response_format: { type: "json_object" }
+                    response_format: { type: "json_object" },
+                    temperature: 0.5
                 });
                 text = groqResponse.choices[0]?.message?.content || "{}";
             } else {
@@ -199,11 +207,21 @@ OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
             if (jsonMatch) {
                 const parsed = JSON.parse(jsonMatch[0]);
 
-                // Ensure all required fields exist
+                // Ensure precautions field exists
+                if (!parsed.precautions || !Array.isArray(parsed.precautions) || parsed.precautions.length === 0) {
+                    parsed.precautions = [
+                        "Get adequate rest and stay hydrated",
+                        "Avoid strenuous physical activity or excessive stress",
+                        "Monitor your condition and seek advice if symptoms worsen",
+                        "Do not administer new over-the-counter medications without professional consultation"
+                    ];
+                }
+
                 return {
                     summary: parsed.summary || "Report analysis completed. Please review the detailed findings below.",
                     concerns: Array.isArray(parsed.concerns) ? parsed.concerns : [],
                     recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : [],
+                    precautions: parsed.precautions,
                     urgency: parsed.urgency || "medium",
                     disclaimer: parsed.disclaimer || "This is not medical advice. Please consult a healthcare professional.",
                 };
@@ -214,6 +232,7 @@ OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
                 summary: cleanedText.substring(0, 500) || "Unable to parse AI response.",
                 concerns: [],
                 recommendations: ["Please consult a healthcare professional for detailed interpretation."],
+                precautions: ["Rest well and track your vitals closely"],
                 urgency: "medium",
                 disclaimer: "This is not medical advice. Please consult a healthcare professional.",
             };
@@ -270,6 +289,7 @@ OUTPUT FORMAT (JSON only, no markdown code blocks, no additional text):
                         { role: "user", content: userMessage }
                     ],
                     model: "llama-3.3-70b-versatile",
+                    temperature: 0.7
                 });
                 return groqResponse.choices[0]?.message?.content || "";
             }
