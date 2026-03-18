@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+
+  /* Simple Card */
+  .medical-card {
+    @apply bg-white rounded-lg border border-gray-200 p-6 hover:border-blue-400 transition-colors duration-200;
+  }
+
+  /* Simple Button Primary */
+  .btn-medical-primary {
+    @apply px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors duration-200 flex items-center justify-center gap-2;
+  }
+
+  /* Simple Button Secondary */
+  .btn-medical-secondary {
+    @apply px-6 py-2.5 bg-white text-blue-600 font-medium border border-blue-600 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-2;
+  }
+
+  /* Simple Input */
+  .input-medical {
+    @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200;
+  }
+
+  /* Simple Badge */
+  .badge-medical {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+}
+
+/* Status Indicators */
+.status-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.status-warning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.status-error {
+  @apply bg-red-100 text-red-800;
+}
+
+.status-info {
+  @apply bg-blue-100 text-blue-800;
+}
