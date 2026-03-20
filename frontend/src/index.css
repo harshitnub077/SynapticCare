@@ -1,53 +1,77 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --color-medical-50: #eff6ff;
+  --color-medical-100: #dbeafe;
+  --color-medical-200: #bfdbfe;
+  --color-medical-300: #93c5fd;
+  --color-medical-400: #60a5fa;
+  --color-medical-500: #3b82f6;
+  --color-medical-600: #2563eb;
+  --color-medical-700: #1d4ed8;
+  --color-medical-800: #1e40af;
+  --color-medical-900: #1e3a8a;
+  --color-medical-950: #172554;
+  
+  --color-teal-50: #f0fdfa;
+  --color-teal-100: #ccfbf1;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+  --color-teal-700: #0f766e;
+}
 
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    @apply text-slate-800 bg-slate-50;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', system-ui, sans-serif;
   }
 }
 
 @layer components {
 
-  /* Simple Card */
+  /* Modern Clinical Card */
   .medical-card {
-    @apply bg-white rounded-lg border border-gray-200 p-6 hover:border-blue-400 transition-colors duration-200;
+    @apply bg-white rounded-2xl border border-slate-200/60 shadow-sm p-6 hover:shadow-md hover:border-medical-200 transition-all duration-300;
   }
 
-  /* Simple Button Primary */
+  /* Premium Buttons */
   .btn-medical-primary {
-    @apply px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors duration-200 flex items-center justify-center gap-2;
+    @apply px-6 py-2.5 bg-gradient-to-r from-medical-600 to-medical-700 text-white font-medium rounded-xl shadow-sm shadow-medical-500/30 hover:shadow-md hover:shadow-medical-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2;
   }
 
-  /* Simple Button Secondary */
   .btn-medical-secondary {
-    @apply px-6 py-2.5 bg-white text-blue-600 font-medium border border-blue-600 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-2;
+    @apply px-6 py-2.5 bg-white text-medical-700 font-medium border border-medical-200 rounded-xl shadow-sm hover:bg-slate-50 active:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2;
   }
 
-  /* Simple Input */
+  /* Clean Input */
   .input-medical {
-    @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200;
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 shadow-sm transition-all duration-200 placeholder-slate-400;
   }
 
-  /* Simple Badge */
+  /* Sophisticated Badge */
   .badge-medical {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase;
   }
 }
 
 /* Status Indicators */
 .status-success {
-  @apply bg-green-100 text-green-800;
+  @apply bg-emerald-50 text-emerald-700 border border-emerald-200/50;
 }
 
 .status-warning {
-  @apply bg-yellow-100 text-yellow-800;
+  @apply bg-amber-50 text-amber-700 border border-amber-200/50;
 }
 
 .status-error {
-  @apply bg-red-100 text-red-800;
+  @apply bg-rose-50 text-rose-700 border border-rose-200/50;
 }
 
 .status-info {
-  @apply bg-blue-100 text-blue-800;
+  @apply bg-sky-50 text-sky-700 border border-sky-200/50;
 }

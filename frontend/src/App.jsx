@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import LoginSignupForm from "./pages/LoginSignupForm";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
@@ -10,6 +10,7 @@ import Chat from "./pages/Chat";
 import Doctors from "./pages/Doctors";
 import Appointments from "./pages/Appointments";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 import DoctorDashboard from "./pages/DoctorDashboard";
 import TestUpload from "./pages/TestUpload";
@@ -60,11 +61,11 @@ function App() {
             <Route path="*" element={<Navigate to="/login" replace />} />
           </>
         ) : (
-          <>
+          <Route element={<Layout userRole={userRole} onLogout={handleLogout}><Outlet /></Layout>}>
             {userRole === "doctor" ? (
-              <Route path="/" element={<DoctorDashboard onLogout={handleLogout} />} />
+              <Route path="/" element={<DoctorDashboard />} />
             ) : (
-              <Route path="/" element={<Home onLogout={handleLogout} />} />
+              <Route path="/" element={<Home />} />
             )}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<UploadReport />} />
@@ -75,7 +76,7 @@ function App() {
             <Route path="/appointments" element={<Appointments />} />
             <Route path="/test-upload" element={<TestUpload />} />
             <Route path="*" element={<Navigate to="/" replace />} />
-          </>
+          </Route>
         )}
       </Routes>
     </BrowserRouter>
