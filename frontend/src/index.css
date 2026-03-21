@@ -1,67 +1,93 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @import "tailwindcss";
 
 @theme {
-  --color-medical-50: #eff6ff;
-  --color-medical-100: #dbeafe;
-  --color-medical-200: #bfdbfe;
-  --color-medical-300: #93c5fd;
-  --color-medical-400: #60a5fa;
-  --color-medical-500: #3b82f6;
-  --color-medical-600: #2563eb;
-  --color-medical-700: #1d4ed8;
-  --color-medical-800: #1e40af;
-  --color-medical-900: #1e3a8a;
-  --color-medical-950: #172554;
-  
-  --color-teal-50: #f0fdfa;
-  --color-teal-100: #ccfbf1;
-  --color-teal-500: #14b8a6;
-  --color-teal-600: #0d9488;
-  --color-teal-700: #0f766e;
+  --color-medical-50: #f0fdf4;
+  --color-medical-100: #dcfce7;
+  --color-medical-200: #bbf7d0;
+  --color-medical-300: #86efac;
+  --color-medical-400: #4ade80;
+  --color-medical-500: #22c55e;
+  --color-medical-600: #16a34a;
+  --color-medical-700: #15803d;
+  --color-medical-800: #166534;
+  --color-medical-900: #14532d;
+  --color-medical-950: #052e16;
+
+  --color-trust-50: #eff6ff;
+  --color-trust-100: #dbeafe;
+  --color-trust-200: #bfdbfe;
+  --color-trust-300: #93c5fd;
+  --color-trust-400: #60a5fa;
+  --color-trust-500: #3b82f6;
+  --color-trust-600: #2563eb;
+  --color-trust-700: #1d4ed8;
+  --color-trust-800: #1e40af;
+  --color-trust-900: #1e3a8a;
+  --color-trust-950: #172554;
 }
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
-    @apply text-slate-800 bg-slate-50;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply text-slate-800 bg-[#F8FAFC];
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Custom Scrollbar for non-lenis browsers */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 }
 
 @layer components {
 
-  /* Modern Clinical Card */
+  /* Modern Clinical Card with Apple Glassmorphism feel */
   .medical-card {
-    @apply bg-white rounded-2xl border border-slate-200/60 shadow-sm p-6 hover:shadow-md hover:border-medical-200 transition-all duration-300;
+    @apply bg-white/80 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-trust-200/50 transition-all duration-400 ease-out;
   }
 
-  /* Premium Buttons */
+  /* Premium Magnetic Buttons */
   .btn-medical-primary {
-    @apply px-6 py-2.5 bg-gradient-to-r from-medical-600 to-medical-700 text-white font-medium rounded-xl shadow-sm shadow-medical-500/30 hover:shadow-md hover:shadow-medical-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2;
+    @apply px-7 py-3.5 bg-gradient-to-tr from-trust-600 to-trust-500 text-white font-semibold rounded-2xl shadow-[0_8px_20px_-6px_rgba(37,99,235,0.4)] hover:shadow-[0_14px_28px_-6px_rgba(37,99,235,0.5)] active:scale-[0.98] active:shadow-[0_4px_10px_-4px_rgba(37,99,235,0.4)] transition-all duration-300 flex items-center justify-center gap-2;
   }
 
   .btn-medical-secondary {
-    @apply px-6 py-2.5 bg-white text-medical-700 font-medium border border-medical-200 rounded-xl shadow-sm hover:bg-slate-50 active:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2;
+    @apply px-7 py-3.5 bg-white text-trust-700 font-semibold border border-trust-100 rounded-2xl shadow-[0_4px_10px_rgb(0,0,0,0.03)] hover:bg-trust-50 hover:border-trust-300 hover:shadow-[0_8px_20px_rgb(0,0,0,0.05)] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2;
   }
 
-  /* Clean Input */
+  /* Clean Input Form Fields */
   .input-medical {
-    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 shadow-sm transition-all duration-200 placeholder-slate-400;
+    @apply w-full px-5 py-4 bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl text-base text-slate-800 focus:outline-none focus:ring-4 focus:ring-trust-500/15 focus:border-trust-400 focus:bg-white shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-all duration-300 placeholder-slate-400;
   }
 
-  /* Sophisticated Badge */
+  /* Sophisticated Pill Badges */
   .badge-medical {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase;
+    @apply inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase shadow-[0_2px_8px_rgb(0,0,0,0.04)];
   }
 }
 
 /* Status Indicators */
 .status-success {
-  @apply bg-emerald-50 text-emerald-700 border border-emerald-200/50;
+  @apply bg-medical-50 text-medical-700 border border-medical-200/50;
 }
 
 .status-warning {
@@ -73,5 +99,26 @@
 }
 
 .status-info {
-  @apply bg-sky-50 text-sky-700 border border-sky-200/50;
+  @apply bg-trust-50 text-trust-700 border border-trust-200/50;
+}
+
+/* Animation Utilities for Framer Motion / Lenis */
+html.lenis {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+    pointer-events: none;
 }
