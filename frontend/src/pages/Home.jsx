@@ -39,6 +39,15 @@ export default function Home() {
                     transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                     className="absolute top-[10%] right-[-10%] w-[50%] h-[70%] rounded-full bg-medical-200/40 blur-[120px]"
                 />
+                <motion.div 
+                    animate={{ 
+                        scale: [1, 1.15, 1],
+                        opacity: [0.15, 0.25, 0.15],
+                        x: [0, 50, 0]
+                    }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                    className="absolute bottom-[-10%] left-[20%] w-[40%] h-[50%] rounded-full bg-emerald-200/40 blur-[100px]"
+                />
             </div>
 
             {/* HERO SECTION */}

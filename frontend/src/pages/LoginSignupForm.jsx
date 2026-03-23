@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { GoogleLogin } from '@react-oauth/google';
 import api from "../api/axiosConfig";
 import { Stethoscope, ShieldCheck, HeartPulse, ArrowRight } from "lucide-react";
 
@@ -43,6 +44,23 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
     } catch (err) {
       if (err.response) setMessage(err.response.data.message);
       else setMessage("Unable to reach the server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    setMessage("");
+    try {
+      const res = await api.post("/auth/google", {
+        token: credentialResponse.credential
+      });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userRole", res.data.user?.role || "patient");
+      onLoginSuccess();
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Google Authentication failed.");
     } finally {
       setLoading(false);
     }
@@ -113,21 +131,34 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
             <button
               type="button"
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
-                isLogin ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
-              }`}
+              className={"flex-1 py-2 text-sm font-medium rounded-lg transition-all " + (isLogin ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900")}
             >
               Sign In
             </button>
             <button
               type="button"
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
-                !isLogin ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
-              }`}
+              className={"flex-1 py-2 text-sm font-medium rounded-lg transition-all " + (!isLogin ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900")}
             >
               Register
             </button>
+          </div>
+
+          <div className="flex justify-center mb-6">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setMessage("Google Login Failed.")}
+              useOneTap
+              shape="pill"
+              theme="outline"
+              size="large"
+            />
+          </div>
+
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex-1 h-px bg-slate-200"></div>
+            <span className="text-sm font-medium text-slate-400 uppercase tracking-widest">OR</span>
+            <div className="flex-1 h-px bg-slate-200"></div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

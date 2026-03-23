@@ -60,4 +60,48 @@ const login = async (req, res) => {
     }
 };
 
-module.exports = { signup, login };
+const { OAuth2Client } = require("google-auth-library");
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const googleLogin = async (req, res) => {
+    try {
+        const { token } = req.body;
+        
+        // Verify the token from Google
+        const ticket = await googleClient.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        
+        if (!payload) {
+            return res.status(401).json({ message: "Invalid Google Token" });
+        }
+
+        const { email, name, picture } = payload;
+        
+        // Check if user already exists
+        let user = await prisma.user.findUnique({ where: { email } });
+        
+        if (!user) {
+            // Create user without password since it's OAuth
+            user = await prisma.user.create({
+                data: {
+                    name: name,
+                    email: email,
+                    role: "patient",
+                },
+            });
+        }
+        
+        const expiresIn = Number(process.env.JWT_EXPIRES_IN) || process.env.JWT_EXPIRES_IN || "24h";
+        const jwtToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn });
+        
+        res.json({ message: "Google Login successful", token: jwtToken, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    } catch (error) {
+        console.error("Google Login Error:", error);
+        res.status(500).json({ message: "Google Authentication failed", error: error.message });
+    }
+};
+
+module.exports = { signup, login, googleLogin };

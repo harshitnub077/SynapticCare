@@ -67,7 +67,12 @@
 
   /* Premium Magnetic Buttons */
   .btn-medical-primary {
-    @apply px-7 py-3.5 bg-gradient-to-tr from-trust-600 to-trust-500 text-white font-semibold rounded-2xl shadow-[0_8px_20px_-6px_rgba(37,99,235,0.4)] hover:shadow-[0_14px_28px_-6px_rgba(37,99,235,0.5)] active:scale-[0.98] active:shadow-[0_4px_10px_-4px_rgba(37,99,235,0.4)] transition-all duration-300 flex items-center justify-center gap-2;
+    @apply px-6 py-3 bg-gradient-to-tr from-trust-600 to-trust-500 hover:from-trust-500 hover:to-trust-400 active:scale-[0.98] text-white rounded-xl font-bold tracking-wide shadow-[0_4px_14px_0_rgb(37,99,235,0.39)] hover:shadow-[0_6px_20px_rgba(37,99,235,0.23)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden;
+  }
+
+  .btn-medical-primary::after {
+    content: '';
+    @apply absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300 rounded-xl;
   }
 
   .btn-medical-secondary {

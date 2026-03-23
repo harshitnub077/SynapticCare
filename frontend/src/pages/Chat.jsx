@@ -13,6 +13,25 @@ const Chat = () => {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
+    useEffect(() => {
+        const fetchHistory = async () => {
+            try {
+                const res = await axiosConfig.get('/chat');
+                if (res.data.messages && res.data.messages.length > 0) {
+                    const formattedHistory = res.data.messages.map(msg => ({
+                        id: msg.id,
+                        sender: msg.role === 'assistant' ? 'ai' : 'user',
+                        text: msg.message
+                    }));
+                    setMessages(formattedHistory);
+                }
+            } catch (error) {
+                console.error("Failed to load chat history:", error);
+            }
+        };
+        fetchHistory();
+    }, []);
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
@@ -32,7 +51,7 @@ const Chat = () => {
 
         try {
             const response = await axiosConfig.post('/chat', { message: inputMessage });
-            const aiMessage = { id: Date.now() + 1, sender: 'ai', text: response.data.reply };
+            const aiMessage = { id: response.data.aiMessage.id || Date.now() + 1, sender: 'ai', text: response.data.aiMessage.message };
             setMessages(prev => [...prev, aiMessage]);
         } catch (error) {
             console.error("Chat error:", error);
@@ -70,7 +89,16 @@ const Chat = () => {
                         </div>
                     </div>
 
-                    <button className="p-2 text-slate-400 hover:text-trust-600 hover:bg-trust-50 rounded-full transition-colors hidden sm:block">
+                    <button 
+                        onClick={async () => {
+                            try {
+                                setMessages([ { id: 1, sender: 'ai', text: 'History cleared. How can I assist you anew?' } ]);
+                                await axiosConfig.delete('/chat');
+                            } catch(e) { console.error(e) }
+                        }}
+                        title="Clear History"
+                        className="p-2 text-slate-400 hover:text-trust-600 hover:bg-trust-50 rounded-full transition-colors hidden sm:block"
+                    >
                         <RefreshCw className="w-5 h-5" />
                     </button>
                 </div>
