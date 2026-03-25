@@ -1,238 +1,207 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Activity, FileText, ArrowRight, HeartPulse, Stethoscope, Clock, Users } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Activity, ShieldCheck, Stethoscope, Video, Network, Sparkles, ArrowRight, Microscope, Users, HeartPulse } from 'lucide-react';
 
 export default function Home() {
-    // Animation Variants
-    const staggerContainer = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: { staggerChildren: 0.15, delayChildren: 0.1 }
-        }
-    };
+  const FADE_UP = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 20 } }
+  };
 
-    const fadeUp = {
-        hidden: { opacity: 0, y: 30 },
-        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50, damping: 15 } }
-    };
+  return (
+    <div className="min-h-screen bg-[#FAFAFA] font-sans selection:bg-trust-200 selection:text-trust-900 overflow-hidden relative">
+      
+      {/* --- CRAZY AESTHETIC BACKGROUND --- */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {/* Animated Tech Grid */}
+        <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} transition={{ duration: 2 }}
+            className="absolute inset-0" 
+            style={{ 
+                backgroundImage: `linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)`, 
+                backgroundSize: '4rem 4rem',
+                maskImage: 'radial-gradient(ellipse 80% 80% at 50% 0%, #000 40%, transparent 100%)'
+            }}
+        />
 
-    return (
-        <div className="w-full relative overflow-hidden bg-white">
+        {/* Massive Ambient Orbs */}
+        <motion.div 
+            animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0], x: [0, 100, 0], y: [0, -50, 0] }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] rounded-full bg-trust-200/40 blur-[130px]" 
+        />
+        <motion.div 
+            animate={{ scale: [1, 1.3, 1], x: [0, -100, 0], y: [0, 50, 0] }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="absolute top-[10%] right-[-15%] w-[900px] h-[900px] rounded-full bg-medical-200/40 blur-[140px]" 
+        />
+        <motion.div 
+            animate={{ scale: [0.8, 1.1, 0.8], rotate: [0, -45, 0] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[40%] left-[20%] w-[600px] h-[600px] rounded-full bg-sky-200/30 blur-[120px]" 
+        />
+
+        {/* Floating Glassmorphic Elements */}
+        <motion.div 
+            animate={{ y: [0, -30, 0], rotate: [0, 5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[25%] left-[10%] w-24 h-24 bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-3xl flex items-center justify-center transform -rotate-12"
+        >
+            <Microscope className="w-10 h-10 text-trust-600" />
+        </motion.div>
+
+        <motion.div 
+            animate={{ y: [0, 40, 0], rotate: [0, -10, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute top-[35%] right-[12%] w-28 h-28 bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-full flex items-center justify-center transform rotate-12"
+        >
+            <ShieldCheck className="w-12 h-12 text-medical-600" />
+        </motion.div>
+
+        {/* Glowing Beam Line */}
+        <div className="absolute top-[30%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-trust-400/50 to-transparent">
+            <motion.div 
+                animate={{ x: ['-100%', '200%'] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="w-[200px] h-full bg-gradient-to-r from-transparent via-trust-500 to-transparent shadow-[0_0_20px_rgba(59,130,246,0.8)]"
+            />
+        </div>
+      </div>
+
+      <div className="relative z-10 pt-40 pb-20 lg:pt-56 lg:pb-32 px-6 max-w-7xl mx-auto">
+        <motion.div 
+            initial="hidden"
+            animate="show"
+            variants={{
+                hidden: { opacity: 0 },
+                show: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.1 } }
+            }}
+            className="text-center max-w-4xl mx-auto relative"
+        >
+            <motion.div variants={FADE_UP} className="mb-8 flex justify-center">
+                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-xl border border-slate-200/50 shadow-[0_8px_16px_rgba(0,0,0,0.03)] text-sm font-bold text-slate-700 tracking-wide hover:scale-105 transition-transform cursor-pointer">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    Synaptic Intelligence Engine v5.0 Live
+                </div>
+            </motion.div>
             
-            {/* Soft Ambient Background Mesh */}
-            <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-br from-[#f0f7ff] via-white to-[#f0fbf9] -z-10 overflow-hidden">
-                <motion.div 
-                    animate={{ 
-                        scale: [1, 1.1, 1],
-                        opacity: [0.3, 0.4, 0.3]
-                    }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute top-[-20%] left-[-10%] w-[60%] h-[80%] rounded-full bg-trust-200/40 blur-[100px]"
-                />
-                <motion.div 
-                    animate={{ 
-                        scale: [1, 1.2, 1],
-                        opacity: [0.2, 0.3, 0.2]
-                    }}
-                    transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    className="absolute top-[10%] right-[-10%] w-[50%] h-[70%] rounded-full bg-medical-200/40 blur-[120px]"
-                />
-                <motion.div 
-                    animate={{ 
-                        scale: [1, 1.15, 1],
-                        opacity: [0.15, 0.25, 0.15],
-                        x: [0, 50, 0]
-                    }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                    className="absolute bottom-[-10%] left-[20%] w-[40%] h-[50%] rounded-full bg-emerald-200/40 blur-[100px]"
-                />
+            <motion.h1 variants={FADE_UP} className="font-display text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight text-slate-900 mb-8 leading-[1.05]">
+                The Future of <br className="hidden sm:block"/>
+                <span className="relative inline-block">
+                    <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-trust-600 via-trust-500 to-medical-500 pb-2">
+                        Intelligent Healthcare.
+                    </span>
+                    <motion.span 
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 1, delay: 0.8, ease: "circOut" }}
+                        className="absolute bottom-0 left-0 w-full h-[6px] bg-trust-200 rounded-full origin-left -z-10"
+                    />
+                </span>
+            </motion.h1>
+            
+            <motion.p variants={FADE_UP} className="text-lg md:text-2xl text-slate-600 mb-14 max-w-3xl mx-auto font-medium leading-relaxed">
+                Experience ultra-premium diagnostic analysis, instantaneous specialist connections, and military-grade encryption for all your neural medical records.
+            </motion.p>
+            
+            <motion.div variants={FADE_UP} className="flex flex-col sm:flex-row items-center justify-center gap-5">
+                <Link to="/upload" className="w-full sm:w-auto px-10 py-5 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-trust-600 shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_40px_rgba(37,99,235,0.3)] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 group">
+                    Initialize Analysis
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link to="/doctors" className="w-full sm:w-auto px-10 py-5 bg-white text-slate-900 border border-slate-200 rounded-2xl font-bold text-lg hover:bg-slate-50 hover:border-slate-300 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                    Browse Network
+                </Link>
+            </motion.div>
+        </motion.div>
+
+        {/* Dashboard Preview / Bento Grid */}
+        <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
+            className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+            <div className="md:col-span-2 medical-card p-8 flex flex-col justify-between overflow-hidden relative group">
+                <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-trust-50 rounded-full blur-3xl group-hover:bg-trust-100 transition-colors duration-500"></div>
+                <div className="relative z-10">
+                    <div className="w-12 h-12 rounded-2xl bg-trust-100 text-trust-600 flex items-center justify-center mb-6 shadow-sm border border-trust-200/50">
+                        <Activity className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3">Diagnostic Neural Engine</h3>
+                    <p className="text-slate-600 max-w-md text-lg leading-relaxed">Upload complex medical imaging or clinical reports. Our multi-modal AI parses, translates, and summarizes with superhuman precision.</p>
+                </div>
+                <div className="relative z-10 mt-8 pt-8 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-sm font-semibold text-trust-600 decoration-trust-300 decoration-2 underline-offset-4 group-hover:underline cursor-pointer">Explore Capabilities</span>
+                    <Sparkles className="w-5 h-5 text-trust-400" />
+                </div>
             </div>
 
-            {/* HERO SECTION */}
-            <section className="pt-24 pb-20 md:pt-36 md:pb-32 px-6 max-w-7xl mx-auto relative z-10">
-                <motion.div 
-                    variants={staggerContainer} 
-                    initial="hidden" 
-                    animate="show"
-                    className="flex flex-col items-center text-center max-w-4xl mx-auto"
-                >
-                    <motion.div variants={fadeUp} className="badge-medical bg-white border border-trust-100 text-trust-600 mb-8 shadow-sm">
-                        <span className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-trust-500 animate-pulse"></span>
-                            India's Most Advanced AI Medical Interface
-                        </span>
-                    </motion.div>
-                    
-                    <motion.h1 
-                        variants={fadeUp}
-                        className="text-5xl md:text-7xl font-bold text-slate-900 tracking-tight leading-[1.1] mb-8"
-                    >
-                        Intelligence that Cares.<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-trust-600 to-medical-500">
-                            Precision that Heals.
-                        </span>
-                    </motion.h1>
-
-                    <motion.p variants={fadeUp} className="text-lg md:text-xl text-slate-600 max-w-2xl mb-12 leading-relaxed">
-                        Experience healthcare reimagined. Upload your reports for instant AI-driven diagnostic analysis, or book consultations with India's most trusted specialists in seconds.
-                    </motion.p>
-
-                    <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
-                        <Link to="/upload" className="w-full sm:w-auto btn-medical-primary text-lg px-8 py-4">
-                            Analyze Report <ArrowRight className="w-5 h-5 ml-1" />
-                        </Link>
-                        <Link to="/doctors" className="w-full sm:w-auto btn-medical-secondary text-lg px-8 py-4">
-                            Find a Specialist
-                        </Link>
-                    </motion.div>
-                </motion.div>
-                
-                {/* Floating Stats Glassmorphism Card */}
-                <motion.div 
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, type: "spring", stiffness: 40 }}
-                    className="mt-20 mx-auto max-w-5xl bg-white/70 backdrop-blur-xl border border-white shadow-[0_20px_40px_rgba(0,0,0,0.04)] rounded-3xl p-8 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100"
-                >
-                    <div className="text-center px-4">
-                        <div className="text-3xl font-bold text-trust-600 mb-1">99%</div>
-                        <div className="text-sm font-medium text-slate-500">Analysis Accuracy</div>
+            <div className="medical-card p-8 flex flex-col justify-between overflow-hidden relative group">
+                 <div className="absolute -left-10 -top-10 w-48 h-48 bg-medical-50 rounded-full blur-2xl group-hover:bg-medical-100 transition-colors duration-500"></div>
+                <div className="relative z-10">
+                    <div className="w-12 h-12 rounded-2xl bg-medical-100 text-medical-600 flex items-center justify-center mb-6 shadow-sm border border-medical-200/50">
+                        <Video className="w-6 h-6" />
                     </div>
-                    <div className="text-center px-4">
-                        <div className="text-3xl font-bold text-trust-600 mb-1">500+</div>
-                        <div className="text-sm font-medium text-slate-500">Verified Doctors</div>
-                    </div>
-                    <div className="text-center px-4">
-                        <div className="text-3xl font-bold text-trust-600 mb-1">24/7</div>
-                        <div className="text-sm font-medium text-slate-500">AI Consultation</div>
-                    </div>
-                    <div className="text-center px-4">
-                        <div className="text-3xl font-bold text-trust-600 mb-1">3 Mins</div>
-                        <div className="text-sm font-medium text-slate-500">Avg. Booking Time</div>
-                    </div>
-                </motion.div>
-            </section>
-
-            {/* FEATURES SECTION */}
-            <section className="py-24 bg-slate-50/50">
-                <div className="max-w-7xl mx-auto px-6">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        className="text-center max-w-2xl mx-auto mb-16"
-                    >
-                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">A Seamless Healthcare Ecosystem</h2>
-                        <p className="text-slate-600">Built for precision, engineered for peace of mind. Every tool you need to manage your health in one secure platform.</p>
-                    </motion.div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {/* Feature 1 */}
-                        <motion.div 
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.1 }}
-                            className="medical-card group"
-                        >
-                            <div className="w-14 h-14 rounded-2xl bg-trust-50 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-trust-100 transition-all duration-300">
-                                <FileText className="w-7 h-7 text-trust-600" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3">AI Diagnostic Scanner</h3>
-                            <p className="text-slate-600 text-sm leading-relaxed">
-                                Upload any complex medical report. Our Neural-Net instantly translates clinical jargon into easy-to-understand health insights.
-                            </p>
-                        </motion.div>
-
-                        {/* Feature 2 */}
-                        <motion.div 
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.2 }}
-                            className="medical-card group border-trust-200 shadow-md transform -translate-y-2"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-br from-trust-500/5 to-transparent rounded-2xl pointer-events-none"></div>
-                            <div className="w-14 h-14 rounded-2xl bg-medical-50 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-medical-100 transition-all duration-300 relative z-10">
-                                <Stethoscope className="w-7 h-7 text-medical-600" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3 relative z-10">Premium Specialist Network</h3>
-                            <p className="text-slate-600 text-sm leading-relaxed relative z-10">
-                                Connect with board-certified doctors from top Indian institutions like AIIMS and Apollo. Book in-person or high-res video consults.
-                            </p>
-                        </motion.div>
-
-                        {/* Feature 3 */}
-                        <motion.div 
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.3 }}
-                            className="medical-card group"
-                        >
-                            <div className="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-rose-100 transition-all duration-300">
-                                <ShieldCheck className="w-7 h-7 text-rose-500" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3">Military-Grade Security</h3>
-                            <p className="text-slate-600 text-sm leading-relaxed">
-                                Your biometric data and medical history are shielded with robust end-to-end encryption. You retain full control of your records.
-                            </p>
-                        </motion.div>
-                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3">Tele-Consultations</h3>
+                    <p className="text-slate-600 leading-relaxed">Instant, high-fidelity secure video connections with top-tier verified specialists globally.</p>
                 </div>
-            </section>
-
-            {/* TRUST SECTION WITH BENTO GRID */}
-            <section className="py-24 bg-white relative overflow-hidden">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="flex flex-col md:flex-row items-center justify-between mb-12">
-                        <div>
-                            <h2 className="text-3xl font-bold text-slate-900 mb-2">Top Specialists Available Today</h2>
-                            <p className="text-slate-500">Consult with the finest medical minds in the country.</p>
-                        </div>
-                        <Link to="/doctors" className="hidden md:flex items-center text-trust-600 font-medium hover:text-trust-700 transition-colors">
-                            View Directory <ArrowRight className="w-4 h-4 ml-1" />
-                        </Link>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[
-                            { name: "Dr. Ananya Sharma", spec: "Neurologist", loc: "AIIMS, New Delhi", wait: "5 mins", img: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop" },
-                            { name: "Dr. Sidharth Menon", spec: "Cardiologist", loc: "Apollo Hospitals", wait: "12 mins", img: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop" },
-                            { name: "Dr. Kavita Desai", spec: "Endocrinologist", loc: "Lilavati Hospital", wait: "Available", img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop" }
-                        ].map((doc, i) => (
-                            <motion.div 
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="group bg-white border border-slate-100 rounded-3xl p-4 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_10px_30px_rgb(0,0,0,0.08)] transition-all flex items-center gap-4 cursor-pointer"
-                            >
-                                <div className="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden shrink-0">
-                                    <img src={doc.img} alt={doc.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                </div>
-                                <div className="flex-1">
-                                    <h4 className="font-bold text-slate-900 group-hover:text-trust-600 transition-colors">{doc.name}</h4>
-                                    <p className="text-xs font-medium text-trust-500 mb-1">{doc.spec}</p>
-                                    <p className="text-[11px] text-slate-400 flex items-center gap-1">
-                                        <Clock className="w-3 h-3" /> Wait: <span className="text-emerald-500 font-medium">{doc.wait}</span>
-                                    </p>
-                                </div>
-                                <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-trust-50 group-hover:text-trust-600 transition-colors">
-                                    <ArrowRight className="w-4 h-4" />
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                    
-                    <Link to="/doctors" className="md:hidden mt-8 flex items-center justify-center text-trust-600 font-medium w-full py-4 border border-trust-100 rounded-2xl">
-                        View Complete Directory
+                <div className="relative z-10 mt-8">
+                    <Link to="/doctors" className="inline-flex w-full items-center justify-center py-2.5 rounded-xl bg-slate-50 text-slate-700 font-semibold text-sm border border-slate-200 group-hover:bg-white group-hover:shadow-sm transition-all">
+                        Find a Doctor
                     </Link>
                 </div>
-            </section>
+            </div>
+
+            <div className="medical-card p-8 flex flex-col justify-between overflow-hidden relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white opacity-50"></div>
+                <div className="relative z-10">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mb-6 shadow-sm border border-rose-100">
+                        <ShieldCheck className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3">Zero-Trust Vault</h3>
+                    <p className="text-slate-600 leading-relaxed">Your data. Your cryptographic keys. End-to-end encrypted medical record storage.</p>
+                </div>
+            </div>
+
+            <div className="md:col-span-2 medical-card p-8 flex flex-col justify-between overflow-hidden relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-trust-600 to-medical-600 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity"></div>
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8 h-full">
+                    <div className="flex-1">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center mb-6 shadow-sm border border-slate-200">
+                            <Network className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-3">Cross-Institution Sync</h3>
+                        <p className="text-slate-600 text-lg leading-relaxed max-w-sm">Seamlessly transfer context between hospitals. Generate unified clinical summaries instantly.</p>
+                    </div>
+                    <div className="w-full md:w-1/2 h-32 md:h-full bg-white/50 border border-slate-200/60 rounded-2xl backdrop-blur-sm flex items-center justify-center relative overflow-hidden">
+                        {/* Abstract visual of sinking data */}
+                        <div className="absolute inset-0 border-[0.5px] border-slate-200 [mask-image:linear-gradient(to_bottom,white,transparent)]" style={{ backgroundSize: '24px 24px', backgroundImage: 'linear-gradient(to right, #f1f5f9 1px, transparent 1px), linear-gradient(to bottom, #f1f5f9 1px, transparent 1px)' }}></div>
+                        <div className="w-16 h-16 bg-white shadow-xl rounded-2xl border border-slate-100 flex items-center justify-center relative z-10">
+                            <HeartPulse className="w-8 h-8 text-trust-500 animate-pulse" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+      </div>
+
+      {/* Trust Section */}
+      <section className="border-t border-slate-200/60 bg-white relative z-10 py-24">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+            <h2 className="text-sm font-bold tracking-widest text-slate-400 uppercase mb-8">Trusted by Elite Institutions</h2>
+            <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
+                <span className="font-display font-bold text-2xl text-slate-800">AIIMS</span>
+                <span className="font-display font-bold text-2xl text-slate-800 flex items-center justify-center gap-1"><Stethoscope className="w-6 h-6"/>Apollo</span>
+                <span className="font-display font-bold text-2xl text-slate-800">FORTIS</span>
+                <span className="font-display font-bold text-2xl text-slate-800">MAX HEALTHCARE</span>
+            </div>
         </div>
-    );
+      </section>
+    </div>
+  );
 }

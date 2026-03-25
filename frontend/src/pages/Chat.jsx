@@ -104,7 +104,7 @@ const Chat = () => {
                 </div>
 
                 {/* Chat Feed */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scroll-smooth bg-slate-50/50">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scroll-smooth bg-slate-50/50" data-lenis-prevent="true">
                     
                     {/* Timestamp Marker */}
                     <div className="text-center text-xs font-semibold text-slate-400 my-4 uppercase tracking-widest">

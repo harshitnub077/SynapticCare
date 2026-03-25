@@ -28,18 +28,18 @@ export default function Navbar({ isAuthenticated, userRole, handleLogout }) {
         <motion.header 
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/80 backdrop-blur-xl shadow-[0_4px_30px_rgb(0,0,0,0.03)] border-b border-slate-200/50 py-3" : "bg-transparent py-5"}`}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? "bg-white/80 backdrop-blur-3xl shadow-[0_8px_30px_rgb(0,0,0,0.03)] border-b border-slate-200/50 py-3" : "bg-transparent py-5"}`}
         >
             <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
                 
                 {/* Logo */}
-                <Link to="/" className="flex items-center gap-2 group">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-trust-600 to-trust-400 flex items-center justify-center shadow-md shadow-trust-500/20 group-hover:shadow-trust-500/40 transition-shadow">
+                <Link to="/" className="flex items-center gap-2.5 group">
+                    <div className="w-10 h-10 rounded-[14px] bg-gradient-to-tr from-trust-600 via-trust-500 to-medical-400 flex items-center justify-center shadow-lg shadow-trust-500/20 group-hover:shadow-trust-500/40 group-hover:-translate-y-0.5 transition-all duration-300">
                         <HeartPulse className="w-5 h-5 text-white" />
                     </div>
                     <span className="font-display font-semibold text-xl tracking-tight text-slate-900">
-                        Synaptic <span className="text-trust-600">Care</span>
+                        Synaptic<span className="text-trust-600">Care</span>
                     </span>
                 </Link>
 
@@ -51,13 +51,13 @@ export default function Navbar({ isAuthenticated, userRole, handleLogout }) {
                             <Link 
                                 key={link.name} 
                                 to={link.path}
-                                className={`text-sm font-medium transition-colors relative ${isActive ? "text-trust-600" : "text-slate-600 hover:text-slate-900"}`}
+                                className={`text-sm font-semibold transition-colors relative ${isActive ? "text-trust-600" : "text-slate-500 hover:text-slate-900"}`}
                             >
                                 {link.name}
                                 {isActive && (
                                     <motion.div 
                                         layoutId="nav-pill"
-                                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-trust-600 rounded-full"
+                                        className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-trust-600 rounded-full"
                                     />
                                 )}
                             </Link>
@@ -69,18 +69,18 @@ export default function Navbar({ isAuthenticated, userRole, handleLogout }) {
                 <div className="hidden md:flex items-center gap-4">
                     {isAuthenticated ? (
                         <div className="flex items-center gap-4">
-                            <Link to="/dashboard" className="flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-trust-600 transition-colors">
-                                <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                            <Link to="/dashboard" className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-trust-600 transition-colors bg-slate-50 border border-slate-200 pl-2 pr-4 py-1.5 rounded-full hover:bg-trust-50 hover:border-trust-200">
+                                <span className="w-7 h-7 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm">
                                     <User className="w-4 h-4 text-slate-500" />
                                 </span>
-                                {userRole === 'doctor' ? 'Doc Portal' : 'Patient Portal'}
+                                {userRole === 'doctor' ? 'Provider Portal' : 'Patient Portal'}
                             </Link>
-                            <button onClick={handleLogout} className="text-sm font-medium text-rose-500 hover:text-rose-600 transition-colors">
+                            <button onClick={handleLogout} className="text-sm font-semibold text-rose-500 hover:text-rose-600 transition-colors">
                                 Logout
                             </button>
                         </div>
                     ) : (
-                        <Link to="/login" className="btn-medical-primary text-sm py-2 px-5">
+                        <Link to="/login" className="btn-medical-primary text-sm py-2.5 px-6 shadow-md shadow-trust-500/20">
                             Sign In / Register
                         </Link>
                     )}
@@ -100,7 +100,7 @@ export default function Navbar({ isAuthenticated, userRole, handleLogout }) {
                 <motion.div 
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
-                    className="md:hidden bg-white border-b border-slate-200 shadow-xl overflow-hidden"
+                    className="md:hidden bg-white/95 backdrop-blur-3xl border-b border-slate-200 shadow-2xl overflow-hidden"
                 >
                     <div className="px-6 py-4 flex flex-col gap-4">
                         {navLinks.map((link) => (
@@ -108,7 +108,7 @@ export default function Navbar({ isAuthenticated, userRole, handleLogout }) {
                                 key={link.name} 
                                 to={link.path}
                                 onClick={() => setMobileMenuOpen(false)}
-                                className={`text-base font-medium ${location.pathname === link.path ? "text-trust-600" : "text-slate-700"}`}
+                                className={`text-base font-semibold ${location.pathname === link.path ? "text-trust-600" : "text-slate-600"}`}
                             >
                                 {link.name}
                             </Link>
@@ -116,11 +116,11 @@ export default function Navbar({ isAuthenticated, userRole, handleLogout }) {
                         <div className="h-px bg-slate-100 my-2"></div>
                         {isAuthenticated ? (
                             <>
-                                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-slate-700">Dashboard</Link>
-                                <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="text-base font-medium text-rose-500 text-left">Logout</button>
+                                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="text-base font-semibold text-slate-700">Dashboard</Link>
+                                <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="text-base font-semibold text-rose-500 text-left">Logout</button>
                             </>
                         ) : (
-                            <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-base font-medium text-trust-600">Sign In</Link>
+                            <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-base font-semibold text-trust-600">Sign In</Link>
                         )}
                     </div>
                 </motion.div>
