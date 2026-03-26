@@ -12,64 +12,28 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] font-sans selection:bg-trust-200 selection:text-trust-900 overflow-hidden relative">
       
-      {/* --- CRAZY AESTHETIC BACKGROUND --- */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {/* Animated Tech Grid */}
+      {/* Ambient Animated Background Meshes */}
+      <div className="absolute inset-x-0 top-0 h-[800px] overflow-hidden pointer-events-none z-0">
         <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} transition={{ duration: 2 }}
-            className="absolute inset-0" 
-            style={{ 
-                backgroundImage: `linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)`, 
-                backgroundSize: '4rem 4rem',
-                maskImage: 'radial-gradient(ellipse 80% 80% at 50% 0%, #000 40%, transparent 100%)'
+            animate={{ 
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, -5, 0],
             }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] rounded-full bg-medical-200/50 blur-[120px] mix-blend-multiply opacity-70" 
         />
-
-        {/* Massive Ambient Orbs */}
         <motion.div 
-            animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0], x: [0, 100, 0], y: [0, -50, 0] }}
+            animate={{ 
+                scale: [1, 1.2, 1],
+                x: [0, 50, 0],
+            }}
             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] rounded-full bg-trust-200/40 blur-[130px]" 
+            className="absolute top-[10%] -right-[15%] w-[900px] h-[900px] rounded-full bg-trust-100/60 blur-[150px] mix-blend-multiply opacity-80" 
         />
-        <motion.div 
-            animate={{ scale: [1, 1.3, 1], x: [0, -100, 0], y: [0, 50, 0] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="absolute top-[10%] right-[-15%] w-[900px] h-[900px] rounded-full bg-medical-200/40 blur-[140px]" 
-        />
-        <motion.div 
-            animate={{ scale: [0.8, 1.1, 0.8], rotate: [0, -45, 0] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[40%] left-[20%] w-[600px] h-[600px] rounded-full bg-sky-200/30 blur-[120px]" 
-        />
-
-        {/* Floating Glassmorphic Elements */}
-        <motion.div 
-            animate={{ y: [0, -30, 0], rotate: [0, 5, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[25%] left-[10%] w-24 h-24 bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-3xl flex items-center justify-center transform -rotate-12"
-        >
-            <Microscope className="w-10 h-10 text-trust-600" />
-        </motion.div>
-
-        <motion.div 
-            animate={{ y: [0, 40, 0], rotate: [0, -10, 0] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute top-[35%] right-[12%] w-28 h-28 bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-full flex items-center justify-center transform rotate-12"
-        >
-            <ShieldCheck className="w-12 h-12 text-medical-600" />
-        </motion.div>
-
-        {/* Glowing Beam Line */}
-        <div className="absolute top-[30%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-trust-400/50 to-transparent">
-            <motion.div 
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="w-[200px] h-full bg-gradient-to-r from-transparent via-trust-500 to-transparent shadow-[0_0_20px_rgba(59,130,246,0.8)]"
-            />
-        </div>
+        <div className="absolute top-[30%] left-[20%] w-[600px] h-[600px] rounded-full bg-teal-50/40 blur-[100px] mix-blend-multiply opacity-50" />
       </div>
 
-      <div className="relative z-10 pt-40 pb-20 lg:pt-56 lg:pb-32 px-6 max-w-7xl mx-auto">
+      <div className="relative z-10 pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 max-w-7xl mx-auto">
         <motion.div 
             initial="hidden"
             animate="show"
