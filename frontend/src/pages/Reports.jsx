@@ -14,7 +14,7 @@ const Reports = () => {
         const fetchReports = async () => {
             try {
                 const response = await axiosConfig.get('/reports');
-                setReports(response.data);
+                setReports(response.data.reports || []);
             } catch (err) {
                 console.error("Error fetching reports", err);
             } finally {
