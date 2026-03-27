@@ -73,8 +73,9 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
     return (
         <div className="min-h-screen bg-zinc-950 flex font-sans overflow-hidden selection:bg-white/10">
             
-            {/* ── Background Glows ── */}
-            <div className="fixed inset-0 pointer-events-none">
+            {/* ── Global Background Elements ── */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:64px_64px]" />
                 <motion.div 
                     animate={{ x: [0, 40, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
@@ -83,23 +84,28 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                 <motion.div 
                     animate={{ x: [0, -50, 0], y: [0, 40, 0], scale: [1, 1.2, 1] }}
                     transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-zinc-100/3 blur-[140px] rounded-full" 
+                    className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-white/3 blur-[140px] rounded-full" 
                 />
             </div>
 
             {/* ── Left Panel ── */}
-            <div className="hidden lg:flex w-1/2 relative bg-zinc-950 border-r border-zinc-900 justify-center items-center p-16 overflow-hidden">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:64px_64px]" />
-                
+            <div className="hidden lg:flex w-1/2 relative bg-zinc-950/50 border-r border-zinc-900 justify-center items-center p-16 overflow-hidden">
                 <motion.div 
                     variants={containerFade} initial="hidden" animate="visible"
                     className="relative z-10 max-w-lg"
                 >
-                    <motion.div variants={itemSlide} className="flex items-center gap-3 mb-10">
-                        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl shadow-white/20">
-                            <Activity className="w-6 h-6 text-zinc-950" />
+                    {/* Aesthetic Logo */}
+                    <motion.div variants={itemSlide} className="flex items-center gap-3 mb-10 group cursor-pointer">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-white/20 blur-md rounded-full group-hover:bg-white/40 transition-all" />
+                            <div className="relative w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.15)] group-hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all">
+                                <Activity className="w-6 h-6 text-zinc-950" />
+                            </div>
                         </div>
-                        <span className="font-display font-bold text-2xl tracking-tight text-white">Synaptic<span className="text-zinc-500">Care</span></span>
+                        <div className="flex flex-col -gap-1">
+                            <span className="font-display font-bold text-2xl tracking-tight text-white leading-tight">SynapticCare</span>
+                            <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] leading-none">Intelligence • Health</span>
+                        </div>
                     </motion.div>
 
                     <motion.h1 variants={itemSlide} className="font-display text-5xl font-bold text-white mb-6 leading-[1.1] tracking-tight">
@@ -135,7 +141,7 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
 
                     <motion.div variants={itemSlide} className="mt-16 flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-full w-fit">
                         <div className="flex -space-x-2">
-                            {[1,2,3].map(i => <div key={i} className="w-7 h-7 rounded-full bg-zinc-800 border-2 border-zinc-950 flex items-center justify-center text-[10px] text-zinc-400">P{i}</div>)}
+                            {[1,2,3].map(i => <div key={i} className="w-7 h-7 rounded-full bg-zinc-800 border-2 border-zinc-950 flex items-center justify-center text-[10px] text-zinc-400 font-bold">P{i}</div>)}
                         </div>
                         <p className="text-xs font-semibold text-zinc-500">Joined by 50K+ patients across India</p>
                     </motion.div>
@@ -143,19 +149,25 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
             </div>
 
             {/* ── Right Panel ── */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 sm:p-14 bg-zinc-950 relative">
+            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 sm:p-14 bg-zinc-950/20 relative backdrop-blur-sm">
                 
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="w-full max-w-md"
+                    className="w-full max-w-md relative z-10"
                 >
                     <div className="text-center mb-10">
-                        <div className="lg:hidden flex items-center gap-3 justify-center mb-8">
-                             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                                <Activity className="w-5 h-5 text-zinc-950" />
+                        <div className="lg:hidden flex items-center gap-3 justify-center mb-10">
+                             <div className="relative">
+                                <div className="absolute inset-0 bg-white/20 blur-md rounded-full" />
+                                <div className="relative w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+                                    <Activity className="w-5 h-5 text-zinc-950" />
+                                </div>
                             </div>
-                             <span className="font-display font-bold text-xl text-white">SynapticCare</span>
+                            <div className="flex flex-col items-start -gap-1">
+                                <span className="font-display font-bold text-xl text-white leading-tight">SynapticCare</span>
+                                <span className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest leading-none">Intelligence • Health</span>
+                            </div>
                         </div>
                         <h2 className="font-display text-4xl font-bold text-white mb-3 tracking-tight">
                             {isLogin ? "Welcome Back" : "Get Started"}
@@ -168,11 +180,11 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                     {/* Tab Switcher */}
                     <div className="bg-zinc-900/80 border border-zinc-800 p-1.5 rounded-2xl flex mb-8">
                         <button type="button" onClick={() => setIsLogin(true)}
-                            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${isLogin ? 'bg-white text-zinc-950 shadow-xl shadow-white/5' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${isLogin ? 'bg-white text-zinc-950 shadow-xl shadow-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}>
                             Log In
                         </button>
                         <button type="button" onClick={() => setIsLogin(false)}
-                            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${!isLogin ? 'bg-white text-zinc-950 shadow-xl shadow-white/5' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${!isLogin ? 'bg-white text-zinc-950 shadow-xl shadow-white/5 font-bold' : 'text-zinc-500 hover:text-zinc-300'}`}>
                             Register
                         </button>
                     </div>
@@ -212,25 +224,25 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                                                             {r}
                                                         </span>
                                                     </div>
-                                                    {role === r && <motion.div layoutId="roleCheck" className="absolute top-2 right-2 w-3 h-3 bg-white rounded-full flex items-center justify-center"><div className="w-1.5 h-1.5 bg-zinc-950 rounded-full" /></motion.div>}
+                                                    {role === r && <motion.div layoutId="roleCheck" className="absolute top-2 right-2 w-3 h-3 bg-white rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.5)]"><div className="w-1.5 h-1.5 bg-zinc-950 rounded-full" /></motion.div>}
                                                 </label>
                                             ))}
                                         </div>
                                         <div className="relative group">
                                             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-white transition-colors" />
-                                            <input type="text" name="name" placeholder="Full Name" className="w-full pl-11 pr-4 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-400 transition-all text-sm" onChange={handleChange} required />
+                                            <input type="text" name="name" placeholder="Full Name" className="w-full pl-11 pr-4 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-400 transition-all text-sm font-medium" onChange={handleChange} required />
                                         </div>
                                     </motion.div>
                                 )}
 
                                 <div className="relative group">
                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-white transition-colors" />
-                                    <input type="email" name="email" placeholder="Email Address" className="w-full pl-11 pr-4 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-400 transition-all text-sm" onChange={handleChange} required />
+                                    <input type="email" name="email" placeholder="Email Address" className="w-full pl-11 pr-4 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-400 transition-all text-sm font-medium" onChange={handleChange} required />
                                 </div>
 
                                 <div className="relative group">
                                     <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-white transition-colors" />
-                                    <input type="password" name="password" placeholder="Password" className="w-full pl-11 pr-4 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-400 transition-all text-sm" onChange={handleChange} required />
+                                    <input type="password" name="password" placeholder="Password" className="w-full pl-11 pr-4 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-400 transition-all text-sm font-medium" onChange={handleChange} required />
                                 </div>
 
                                 {isLogin && (
@@ -269,15 +281,10 @@ const LoginSignupForm = ({ onLoginSuccess = () => { } }) => {
                         )}
                     </AnimatePresence>
 
-                    <div className="mt-12 text-center text-xs text-zinc-600 flex items-center justify-center gap-2 font-medium">
+                    <div className="mt-12 text-center text-[10px] text-zinc-700 flex items-center justify-center gap-2 font-bold uppercase tracking-widest">
                         <ShieldCheck className="w-3.5 h-3.5" /> HIPAA Compliant · 256-bit AES Encrypted
                     </div>
-                    </motion.div>
-
-                {/* Bottom Footer links (mobile only) */}
-                <div className="mt-auto pt-10 text-zinc-700 text-[10px] uppercase tracking-widest font-bold">
-                   © 2026 SynapticCare Technologies
-                </div>
+                </motion.div>
             </div>
         </div>
     );

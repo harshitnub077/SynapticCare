@@ -37,15 +37,16 @@ export default function Navbar({ isAuthenticated, userRole, handleLogout }) {
 
                 {/* ── Logo ── */}
                 <Link to="/" className="flex items-center gap-2.5 group">
-                    {/* Logo mark */}
-                    <div className="relative w-8 h-8">
-                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-lg group-hover:shadow-white/20 transition-all">
-                            <Activity className="w-4 h-4 text-zinc-900" />
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-white/20 blur-md rounded-full group-hover:bg-white/40 transition-all" />
+                        <div className="relative w-9 h-9 bg-white rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.15)] group-hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all">
+                            <Activity className="w-5 h-5 text-zinc-950" />
                         </div>
                     </div>
-                    <span className="font-display font-bold text-xl tracking-tight text-white">
-                        Synaptic<span className="text-zinc-400">Care</span>
-                    </span>
+                    <div className="flex flex-col -gap-1">
+                        <span className="font-display font-bold text-xl tracking-tight text-white leading-tight">Synaptic<span className="text-zinc-500 group-hover:text-zinc-300 transition-colors">Care</span></span>
+                        <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-none">Intelligence • Health</span>
+                    </div>
                 </Link>
 
                 {/* ── Desktop Nav ── */}
