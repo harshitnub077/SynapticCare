@@ -83,9 +83,9 @@ const FileUpload = ({ onFileSelect }) => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.98 }}
-                        className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 ease-out bg-white ${dragActive
-                                ? "border-trust-500 bg-trust-50 shadow-[0_0_30px_rgb(59,130,246,0.15)]"
-                                : "border-slate-200 hover:border-trust-400 hover:bg-slate-50"
+                        className={`relative border-2 border-dashed rounded-[2rem] p-12 text-center transition-all duration-300 ease-out backdrop-blur-md ${dragActive
+                                ? "border-white bg-zinc-900/80 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                                : "border-zinc-800 hover:border-zinc-600 bg-zinc-950/50 hover:bg-zinc-900/80"
                             }`}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
@@ -105,18 +105,18 @@ const FileUpload = ({ onFileSelect }) => {
                                 className="flex flex-col items-center"
                                 animate={dragActive ? { y: -5 } : { y: 0 }}
                             >
-                                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-300 ${dragActive ? 'bg-trust-100 text-trust-600' : 'bg-slate-100 text-slate-400'}`}>
+                                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-300 border ${dragActive ? 'bg-zinc-800 text-white border-zinc-700' : 'bg-zinc-900 text-zinc-500 border-zinc-800'}`}>
                                     <Upload className="w-10 h-10" />
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                                <h3 className="text-xl font-bold text-white mb-2 font-display">
                                     Drop your medical record here
                                 </h3>
-                                <p className="text-sm text-slate-500 mb-8 max-w-sm">
+                                <p className="text-sm text-zinc-500 mb-8 max-w-sm">
                                     Upload PDFs or high-quality photos of your reports. Our AI will automatically extract and analyze the clinical metrics.
                                 </p>
                                 <button
                                     type="button"
-                                    className="btn-medical-secondary bg-white shadow-sm hover:shadow-md"
+                                    className="btn-medical-secondary bg-white text-black border-transparent hover:bg-zinc-200 shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         document.getElementById("file-upload").click();
@@ -124,7 +124,7 @@ const FileUpload = ({ onFileSelect }) => {
                                 >
                                     Browse Files
                                 </button>
-                                <p className="text-xs font-semibold text-slate-400 mt-6 tracking-wide uppercase">
+                                <p className="text-xs font-semibold text-zinc-600 mt-6 tracking-wide uppercase">
                                     Supports PDF, JPG, PNG up to 10MB
                                 </p>
                             </motion.div>
@@ -135,27 +135,27 @@ const FileUpload = ({ onFileSelect }) => {
                         key="preview-box"
                         initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="medical-card border-trust-200 shadow-md p-6 bg-gradient-to-br from-white to-trust-50/30"
+                        className="medical-card border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.5)] p-6 bg-zinc-900/50 backdrop-blur-xl"
                     >
                         <div className="flex items-start justify-between">
                             <div className="flex items-center space-x-4">
-                                <div className="w-14 h-14 rounded-2xl bg-trust-100 flex items-center justify-center shrink-0">
+                                <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0">
                                     {selectedFile.type === "application/pdf" ? (
-                                        <FileText className="h-7 w-7 text-trust-600" />
+                                        <FileText className="h-7 w-7 text-white" />
                                     ) : (
-                                        <ImageIcon className="h-7 w-7 text-trust-600" />
+                                        <ImageIcon className="h-7 w-7 text-white" />
                                     )}
                                 </div>
                                 <div>
-                                    <p className="font-semibold text-slate-900 truncate max-w-[200px] sm:max-w-xs">{selectedFile.name}</p>
-                                    <p className="text-sm text-slate-500 font-medium">
+                                    <p className="font-semibold text-white truncate max-w-[200px] sm:max-w-xs">{selectedFile.name}</p>
+                                    <p className="text-sm text-zinc-400 font-medium">
                                         {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • Ready for AI Parse
                                     </p>
                                 </div>
                             </div>
                             <button
                                 onClick={clearFile}
-                                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-rose-100 hover:text-rose-600 transition-colors"
+                                className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-red-950/50 hover:text-rose-400 transition-colors border border-transparent hover:border-red-900"
                             >
                                 <X className="h-4 w-4" />
                             </button>
@@ -165,15 +165,15 @@ const FileUpload = ({ onFileSelect }) => {
                             <motion.div 
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="mt-6 relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100"
+                                className="mt-6 relative rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-950"
                             >
                                 <img
                                     src={preview}
                                     alt="Preview"
                                     className="max-h-[300px] mx-auto object-contain"
                                 />
-                                <div className="absolute top-3 left-3 badge-medical bg-white/90 backdrop-blur-md text-trust-700 shadow-sm border border-white flex items-center gap-1.5">
-                                    <Sparkles className="w-3 h-3 text-trust-500" /> Scanning
+                                <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full text-xs font-bold leading-none bg-black/60 backdrop-blur-md text-white shadow-sm border border-zinc-700 flex items-center gap-1.5">
+                                    <Sparkles className="w-3 h-3 text-emerald-400" /> Scanning Matrix
                                 </div>
                             </motion.div>
                         )}

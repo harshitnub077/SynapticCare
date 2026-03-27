@@ -4,13 +4,13 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import { Outlet } from 'react-router-dom';
 
-const Layout = ({ userRole, onLogout }) => {
+const Layout = ({ isAuthenticated, userRole, onLogout, children }) => {
     return (
         <SmoothScroll>
-            <div className="flex flex-col min-h-screen bg-[#F8FAFC] font-sans antialiased text-slate-800">
-                <Navbar isAuthenticated={true} userRole={userRole} handleLogout={onLogout} />
-                <main className="flex-1 w-full relative pt-20">
-                    <Outlet />
+            <div className="flex flex-col min-h-screen bg-zinc-950 font-sans antialiased text-zinc-200 selection:bg-white/10 selection:text-white">
+                <Navbar isAuthenticated={isAuthenticated} userRole={userRole} handleLogout={onLogout} />
+                <main className="flex-1 w-full relative pt-20 z-10">
+                    {children ? children : <Outlet />}
                 </main>
                 <Footer />
             </div>

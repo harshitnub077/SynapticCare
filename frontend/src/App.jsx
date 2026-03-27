@@ -27,9 +27,6 @@ function App() {
       setIsAuthenticated(Boolean(token));
 
       if (token) {
-        // Decode token to get role or fetch user profile
-        // For simplicity, we'll fetch the user profile or store role in localStorage on login
-        // Let's assume we store it in localStorage for now to keep it simple
         const storedRole = localStorage.getItem("userRole");
         setUserRole(storedRole);
       }
@@ -54,31 +51,37 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        {!isAuthenticated ? (
-          <>
-            <Route path="/login" element={<LoginSignupForm onLoginSuccess={handleLoginSuccess} />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </>
-        ) : (
-          <Route element={<Layout userRole={userRole} onLogout={handleLogout}><Outlet /></Layout>}>
-            {userRole === "doctor" ? (
-              <Route path="/" element={<DoctorDashboard />} />
-            ) : (
-              <Route path="/" element={<Home />} />
-            )}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/upload" element={<UploadReport />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/reports/:id" element={<ReportDetail />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/doctors" element={<Doctors />} />
-            <Route path="/appointments" element={<Appointments />} />
-            <Route path="/test-upload" element={<TestUpload />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        )}
-      </Routes>
+      {/* Layout wraps all routes so Navbar/Footer is always visible */}
+      <Layout isAuthenticated={isAuthenticated} userRole={userRole} onLogout={handleLogout}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/doctors" element={<Doctors />} />
+          <Route 
+            path="/login" 
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginSignupForm onLoginSuccess={handleLoginSuccess} />} 
+          />
+
+          {/* Protected Routes */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                {userRole === "doctor" ? <DoctorDashboard /> : <Dashboard />}
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/upload" element={<ProtectedRoute><UploadReport /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+          <Route path="/reports/:id" element={<ProtectedRoute><ReportDetail /></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+          <Route path="/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
+          <Route path="/test-upload" element={<ProtectedRoute><TestUpload /></ProtectedRoute>} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Layout>
     </BrowserRouter>
   );
 }
