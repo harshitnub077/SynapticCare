@@ -49,64 +49,67 @@
   ::-webkit-scrollbar-thumb:hover { background: #555; }
 }
 
-@layer components {
-
-  /* ── Dark Premium Card ── */
-  .dark-card {
-    @apply bg-zinc-900 rounded-2xl border border-zinc-800 transition-all duration-300;
-  }
-
-  .dark-card-hover {
-    @apply dark-card hover:border-zinc-600 hover:shadow-2xl hover:shadow-black/60 hover:-translate-y-1;
-  }
-
-  /* ── Primary Button ── */
-  .btn-primary {
-    @apply px-6 py-3 bg-white text-zinc-900 rounded-xl font-semibold
-           hover:bg-zinc-100 hover:-translate-y-0.5 active:scale-[0.98]
-           transition-all duration-200 flex items-center justify-center gap-2
-           shadow-lg shadow-white/10;
-  }
-
-  /* ── Ghost Button ── */
-  .btn-ghost {
-    @apply px-6 py-3 border border-zinc-700 text-zinc-300 rounded-xl font-semibold
-           hover:border-zinc-500 hover:text-white hover:-translate-y-0.5 active:scale-[0.98]
-           transition-all duration-200 flex items-center justify-center gap-2;
-  }
-
-  /* ── Accent Button (blue) ── */
-  .btn-accent {
-    @apply px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold
-           hover:bg-blue-500 hover:-translate-y-0.5 active:scale-[0.98]
-           transition-all duration-200 flex items-center justify-center gap-2
-           shadow-lg shadow-blue-900/40;
-  }
-
-  /* ── Dark Input ── */
-  .input-dark {
-    @apply w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl
-           text-base text-white placeholder-zinc-500
-           focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500
-           transition-all duration-200;
-  }
-
-  /* Keep backwards‐compat alias */
-  .input-medical { @apply input-dark; }
-  .btn-medical-primary { @apply btn-accent; }
-  .btn-medical-secondary { @apply btn-ghost; }
-  .medical-card { @apply dark-card-hover; }
-
-  /* ── Pill Badge ── */
-  .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide;
-  }
-
-  /* ── Section heading group ── */
-  .section-label {
-    @apply text-xs font-semibold uppercase tracking-[0.15em] text-zinc-400;
-  }
+/* ── Dark Premium Card ── */
+@utility dark-card {
+  @apply bg-zinc-900 rounded-2xl border border-zinc-800 transition-all duration-300;
 }
+
+@utility dark-card-hover {
+  @apply dark-card hover:border-zinc-600 hover:shadow-2xl hover:shadow-black/60 hover:-translate-y-1;
+}
+
+/* ── Primary Button ── */
+@utility btn-primary {
+  @apply px-6 py-3 bg-white text-zinc-900 rounded-xl font-semibold
+         hover:bg-zinc-100 hover:-translate-y-0.5 active:scale-[0.98]
+         transition-all duration-200 flex items-center justify-center gap-2
+         shadow-lg shadow-white/10;
+}
+
+/* ── Ghost Button ── */
+@utility btn-ghost {
+  @apply px-6 py-3 border border-zinc-700 text-zinc-300 rounded-xl font-semibold
+         hover:border-zinc-500 hover:text-white hover:-translate-y-0.5 active:scale-[0.98]
+         transition-all duration-200 flex items-center justify-center gap-2;
+}
+
+/* ── Accent Button (blue) ── */
+@utility btn-accent {
+  @apply px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold
+         hover:bg-blue-500 hover:-translate-y-0.5 active:scale-[0.98]
+         transition-all duration-200 flex items-center justify-center gap-2
+         shadow-lg shadow-blue-900/40;
+}
+
+/* ── Dark Input ── */
+@utility input-dark {
+  @apply w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl
+         text-base text-white placeholder-zinc-500
+         focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500
+         transition-all duration-200;
+}
+
+/* Backwards‐compat aliases */
+@utility input-medical { @apply input-dark; }
+@utility btn-medical-primary { @apply btn-accent; }
+@utility btn-medical-secondary { @apply btn-ghost; }
+@utility medical-card { @apply dark-card-hover; }
+
+/* ── Pill Badge ── */
+@utility badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide;
+}
+
+/* ── Section heading group ── */
+@utility section-label {
+  @apply text-xs font-semibold uppercase tracking-[0.15em] text-zinc-400;
+}
+
+/* ── Status badges (dark variants) ── */
+@utility status-success { @apply bg-emerald-950 text-emerald-400 border border-emerald-800; }
+@utility status-warning  { @apply bg-amber-950 text-amber-400 border border-amber-800; }
+@utility status-error    { @apply bg-red-950 text-red-400 border border-red-900; }
+@utility status-info     { @apply bg-blue-950 text-blue-400 border border-blue-900; }
 
 /* ── Utility: Noise grain overlay ── */
 .grain::before {
@@ -122,12 +125,6 @@
 /* ── Glow helpers ── */
 .glow-blue { box-shadow: 0 0 60px -10px rgba(59,130,246,0.35); }
 .glow-white { box-shadow: 0 0 60px -10px rgba(255,255,255,0.12); }
-
-/* ── Status badges (dark variants) ── */
-.status-success { @apply bg-emerald-950 text-emerald-400 border border-emerald-800; }
-.status-warning  { @apply bg-amber-950 text-amber-400 border border-amber-800; }
-.status-error    { @apply bg-red-950 text-red-400 border border-red-900; }
-.status-info     { @apply bg-blue-950 text-blue-400 border border-blue-900; }
 
 /* ── Lenis integration ── */
 html.lenis { height: auto; }
