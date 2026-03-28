@@ -25,7 +25,15 @@ const Chat = () => {
         fetchHistory();
     }, []);
 
-    useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isTyping]);
+    useEffect(() => {
+        const container = messagesEndRef.current?.parentElement;
+        if (container) {
+            const isNearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+            if (isNearBottom) {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }, [messages, isTyping]);
 
     const handleSend = async (e) => {
         e.preventDefault();
