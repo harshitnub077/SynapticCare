@@ -43,36 +43,45 @@ const UploadReport = () => {
     const displayMsg = message.replace(/^(success:|error:)/, '');
 
     return (
-        <div className="w-full min-h-screen bg-slate-50 pb-16">
-            <div className="bg-white border-b border-slate-200 px-6 py-8">
-                <div className="max-w-3xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-sm font-semibold mb-4">
-                        <BrainCircuit className="w-4 h-4" /> AI-Powered Report Analysis
-                    </div>
-                    <h1 className="text-3xl font-bold font-display text-slate-900 mb-2">Upload Medical Reports</h1>
-                    <p className="text-slate-500 text-lg">Upload your lab tests, scan reports, or clinical documents for instant AI-powered analysis and health insights.</p>
+        <div className="w-full min-h-screen bg-zinc-950 pb-20">
+            {/* Header Overlay */}
+            <div className="relative bg-zinc-950 border-b border-zinc-800/60 overflow-hidden py-24">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_-20%,rgba(59,130,246,0.1),transparent)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:48px_48px]" />
+                
+                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-bold uppercase tracking-[0.2em] mb-8"
+                    >
+                        <BrainCircuit className="w-4 h-4 text-white" /> Intelligence Processing
+                    </motion.div>
+                    <h1 className="text-5xl font-bold font-display text-white mb-6 tracking-tight leading-tight">Upload Clinical Reports</h1>
+                    <p className="text-zinc-500 text-xl max-w-2xl mx-auto leading-relaxed">Securely upload your diagnostic records for instant AI-driven biomarker extraction and medical synthesis.</p>
                 </div>
             </div>
 
-            <div className="max-w-3xl mx-auto px-6 pt-8">
+            <div className="max-w-3xl mx-auto px-6 pt-12">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 md:p-10">
+                    className="bg-zinc-900 rounded-[32px] border border-zinc-800 shadow-2xl p-10 md:p-14 relative overflow-hidden"
+                >
+                    {/* Background Decorative Glow */}
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/5 blur-[100px] rounded-full" />
 
-                    <div className="flex items-center gap-2 text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-4 py-2.5 rounded-xl w-fit mb-8">
-                        <ShieldCheck className="w-4 h-4" /> HIPAA Compliant · End-to-End Encrypted
+                    <div className="flex items-center gap-3 text-xs font-bold text-emerald-400 bg-emerald-950/30 border border-emerald-900/40 px-5 py-3 rounded-2xl w-fit mb-12 tracking-[0.1em] uppercase">
+                        <ShieldCheck className="w-4 h-4" /> HIPAA Certified · End-to-End Encrypted
                     </div>
 
                     <FileUpload onFileSelect={setFile} />
 
                     <AnimatePresence>
                         {uploading && (
-                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden mt-8">
-                                <div className="flex justify-between text-sm font-semibold text-slate-700 mb-2.5">
-                                    <span className="flex items-center gap-2"><Activity className="w-4 h-4 text-blue-600 animate-pulse" />Encrypting & sending...</span>
-                                    <span className="text-blue-600 font-bold">{progress}%</span>
+                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden mt-12">
+                                <div className="flex justify-between text-xs font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">
+                                    <span className="flex items-center gap-2.5"><Activity className="w-4 h-4 text-blue-500 animate-pulse" />Ingesting Diagnostic Stream...</span>
+                                    <span className="text-white">{progress}%</span>
                                 </div>
-                                <div className="w-full bg-slate-100 rounded-full h-2.5 border border-slate-200 overflow-hidden">
-                                    <motion.div initial={{ width: 0 }} animate={{ width: progress + "%" }} className="bg-gradient-to-r from-blue-500 to-teal-500 h-full rounded-full shadow-sm" />
+                                <div className="w-full bg-zinc-800 rounded-full h-2.5 border border-zinc-700 overflow-hidden">
+                                    <motion.div initial={{ width: 0 }} animate={{ width: progress + "%" }} className="bg-white h-full rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] transition-all duration-300" />
                                 </div>
                             </motion.div>
                         )}
@@ -80,31 +89,38 @@ const UploadReport = () => {
 
                     <AnimatePresence>
                         {message && (
-                            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                className={`mt-6 p-4 rounded-xl flex items-center gap-3 text-sm font-medium ${isSuccess ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isSuccess ? 'bg-emerald-100' : 'bg-red-100'}`}>
-                                    {isSuccess ? <CheckCircle className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-red-600" />}
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+                                className={`mt-10 p-6 rounded-2xl flex items-center gap-4 text-sm font-semibold border ${isSuccess ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/50' : 'bg-red-950/40 text-red-400 border-red-900/50'}`}>
+                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${isSuccess ? 'bg-emerald-900/50' : 'bg-red-900/50'}`}>
+                                    {isSuccess ? <CheckCircle className="w-6 h-6" /> : <AlertCircle className="w-6 h-6" />}
                                 </div>
-                                {displayMsg}
+                                <div>
+                                    <p className="font-bold mb-0.5">{isSuccess ? 'Upload Successful' : 'Upload Failed'}</p>
+                                    <p className="text-zinc-500 text-xs font-medium">{displayMsg}</p>
+                                </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <div className="mt-8 flex flex-col sm:flex-row gap-3 pt-8 border-t border-slate-100">
+                    <div className="mt-12 flex flex-col sm:flex-row gap-5 pt-12 border-t border-zinc-800">
                         <button onClick={handleUpload} disabled={!file || uploading}
-                            className="btn-medical-primary flex-1 py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed">
-                            {uploading ? "Analyzing..." : "Start AI Analysis"}
+                            className="btn-primary flex-1 py-4.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed shadow-xl shadow-white/5 uppercase tracking-[0.15em]">
+                            {uploading ? "Analyzing Report..." : "Begin AI Synthesis"}
                         </button>
-                        <button onClick={() => navigate("/reports")} className="btn-medical-secondary py-3.5 px-8" disabled={uploading}>
-                            View My Records
+                        <button onClick={() => navigate("/reports")} className="px-10 py-4.5 bg-zinc-900 border border-zinc-700 text-zinc-400 rounded-2xl font-bold text-sm hover:text-white hover:border-zinc-500 transition-all uppercase tracking-[0.15em]" disabled={uploading}>
+                            View Archive
                         </button>
                     </div>
 
-                    <div className="mt-6 grid grid-cols-3 gap-4 text-center">
-                        {["PDF, JPG, PNG", "Up to 10 MB", "256-bit AES"].map((f, i) => (
-                            <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                <p className="text-xs font-semibold text-slate-500">{["Supported Formats", "Max File Size", "Encryption"][i]}</p>
-                                <p className="text-sm font-bold text-slate-800 mt-1">{f}</p>
+                    <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-5">
+                        {[
+                            { label: "Supported", val: "PDF, JPG, DICOM", icon: FileText },
+                            { label: "Bandwidth", val: "Up to 15MB", icon: Activity },
+                            { label: "Storage", val: "AES-256 Vault", icon: Lock }
+                        ].map((f, i) => (
+                            <div key={i} className="p-5 bg-zinc-950/40 rounded-2xl border border-zinc-800 text-center flex flex-col items-center gap-1">
+                                <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest leading-none">{f.label}</p>
+                                <p className="text-xs font-bold text-zinc-300 mt-1">{f.val}</p>
                             </div>
                         ))}
                     </div>
