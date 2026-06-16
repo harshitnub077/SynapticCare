@@ -88,9 +88,3 @@ SynapticCare+ is an intelligent healthcare platform that uses **AI**, **NLP**, a
     The app will run on `http://localhost:5173`.
 
 
-## API Endpoints
-- `POST /api/v1/auth/signup`: Create a new account
-- `POST /api/v1/auth/login`: Login to an existing account
-- `GET /api/v1/users/me`: Get current user profile
-
-
